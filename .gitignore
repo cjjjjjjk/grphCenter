@@ -1,0 +1,8 @@
+server/node_modules
+client/node_modules
+
+# enviroment variable 
+server/.env
+client/.env
+# congfiguration
+server/config/config.json
