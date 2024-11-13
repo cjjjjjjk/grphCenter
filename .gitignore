@@ -6,3 +6,7 @@ server/.env
 client/.env
 # congfiguration
 server/config/config.json
+
+
+# dist
+server/dist
