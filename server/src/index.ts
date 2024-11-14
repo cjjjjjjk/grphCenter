@@ -1,13 +1,28 @@
-import dotenv from 'dotenv';
 import express, { Request, Response } from 'express';
-const app = express();
+import connectDB from './config/database';
+import dotenv from 'dotenv';
+import userRoutes from './routes/user';
+import graphRoutes from './routes/graph';
+
+
 dotenv.config();
 
+const app = express();
 const PORT = process.env.PORT;
 
-app.get('/', (req: Request, res: Response) => {
-    res.send('Hello, Express with TypeScript!');
-});
+connectDB()
+
+app.use(express.json());
+
+// Routes ========================================================
+app.use("/api/users", userRoutes)
+app.use("/api/graphs", graphRoutes)
+
+
+
+
+
+// ===============================================================
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
