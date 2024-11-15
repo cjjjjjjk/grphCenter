@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 
-// Xác định kiểu root là React.Root để TypeScript hiểu rõ hơn.
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );

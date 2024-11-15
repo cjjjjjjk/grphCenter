@@ -1,18 +1,26 @@
 import React from 'react';
 import './App.css';
+import { Route, Routes, BrowserRouter, NavLink, useLocation } from "react-router-dom"
+
 import Home from './page/Home';
+import Calculator from './page/Calcurlator';
+
+import MainHeader from './component/MainHeader';
 
 const App: React.FC = () => {
+
   return (
-    <div>
-      <header className="h-[72px] border-black border-b-2 flex items-center justify-center  " >
-        <h1 className="text-center text-4xl justify-center">Welcome to grphCenter</h1>
-      </header>
-      <main>
-        <h2>--- Welcome page !</h2>
-        <Home />
-      </main>
-    </div>
+    <BrowserRouter>
+      <div className='App-font'>
+        <MainHeader />
+        <main>
+          <Routes>
+            <Route path='/' element={<Home />}></Route>
+            <Route path="/calcurlator" element={<Calculator />} />
+          </Routes>
+        </main>
+      </div>
+    </BrowserRouter>
   );
 }
 
