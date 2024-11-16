@@ -10,7 +10,7 @@ import MainHeader from './component/MainHeader';
 const App: React.FC = () => {
 
   return (
-    <BrowserRouter>
+    <BrowserRouter >
       <div className='App-font'>
         <MainHeader />
         <main>

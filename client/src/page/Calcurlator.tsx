@@ -1,6 +1,10 @@
 import React from "react";
-
 import { DefaultNode, Graph } from '@visx/network';
+
+
+// components
+import ToolHeader from "../component/ToolHeader";
+
 
 interface CustomNode {
     x: number;
@@ -11,6 +15,7 @@ interface CustomNode {
 interface CustomLink {
     source: CustomNode;
     target: CustomNode;
+    weight?: number;
     dashed?: boolean;
 }
 
@@ -31,40 +36,37 @@ const graph = {
     nodes,
     links,
 };
-const width = 2000
-const height = 1600
-
-const background = '#272b4d';
 
 const Calculator: React.FC = () => {
     return (
-        <div>
-            <svg width={width} height={height}>
-                <rect width={width} height={height} rx={14} fill={background} />
+        <>
+            <ToolHeader />
+            <div className="bottom-0 w-full h-[1235px]">
+                <svg className="w-full h-full  bg-calcurlator-color-custom">
+                    <Graph<CustomLink, CustomNode>
+                        graph={graph}
+                        top={0}
+                        left={0}
 
-                <Graph<CustomLink, CustomNode>
-                    graph={graph}
-                    top={20}
-                    left={100}
-
-                    nodeComponent={({ node: { color } }) =>
-                        color ? <DefaultNode fill={color} /> : <DefaultNode />
-                    }
-                    linkComponent={({ link: { source, target, dashed } }) => (
-                        <line
-                            x1={source.x}
-                            y1={source.y}
-                            x2={target.x}
-                            y2={target.y}
-                            strokeWidth={2}
-                            stroke="#999"
-                            strokeOpacity={0.6}
-                            strokeDasharray={dashed ? '8,4' : undefined}
-                        />
-                    )}
-                /> Home
-            </svg>
-        </div>
+                        nodeComponent={({ node: { color } }) =>
+                            color ? <DefaultNode fill={color} /> : <DefaultNode />
+                        }
+                        linkComponent={({ link: { source, target, dashed } }) => (
+                            <line
+                                x1={source.x}
+                                y1={source.y}
+                                x2={target.x}
+                                y2={target.y}
+                                strokeWidth={2}
+                                stroke="#999"
+                                strokeOpacity={0.6}
+                                strokeDasharray={dashed ? '8,4' : undefined}
+                            />
+                        )}
+                    /> Home
+                </svg>
+            </div >
+        </>
     )
 }
 
