@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 // components
 import ToolHeader from "../component/ToolHeader";
@@ -8,6 +8,7 @@ import InputDialog from "../component/InputDialog";
 // entities
 import { CustomNode } from "../entity/node";
 import { CustomLink } from "../entity/link";
+import { redirect } from "react-router-dom";
 
 // test data --------------------------------------------------
 const nodes_test =
@@ -27,86 +28,161 @@ const links_test = [
 ]
 // ------------------------------------------------------------
 // Main component =============================================
-
 const Calculator: React.FC = () => {
-    const [nodes, setNodes] = useState<CustomNode[]>(nodes_test);
-    const [links, setLinks] = useState<CustomLink[]>(links_test);
-    const [graphType, setGraphType] = useState("")
+    // element demantion ----------------------
+    const svgRef = useRef<SVGSVGElement | null>(null);
+    const [svgDimensions, setSvgDimensions] = useState({ width: 0, height: 0 });
 
-    // get data from component
+    const [nodes, setNodes] = useState<CustomNode[]>([]);
+    const [links, setLinks] = useState<CustomLink[]>([]);
+    const [graphType, setGraphType] = useState("")
+    const [data, setData] = useState("")
+    const [reDraw, setReDraw] = useState(false)
+
+    // get data from components------------------------
+    // graph type : string ----------------
     const handleGraphType = function (graphType: string) {
         setGraphType(graphType)
     }
+    // graph data: string, multiple line --
+    const graphData = function (data: string) {
+        setData(data)
+    }
+    // redraw graph -------------------
+    const ReDraw = function (data: boolean) {
+        setReDraw(!reDraw);
+    }
+    //-------------------------------------------------------
+    // render nodes, link from data -------------------------
+    // render nodes handle---
+    const RenderNode = function () {
+        const lines = data.split('\n')
+        const [v, e] = lines[0].split(" ").map(Number)
 
-    const addNode = () => {
-        const newNode: CustomNode = {
-            id: `${nodes.length + 1}`,
-            name: `${nodes.length + 1}`,
-            x: Math.random() * 2400 + 50,
-            y: Math.random() * 1400,
-            color: "steelblue",
-        };
-        setNodes([...nodes, newNode]);
-    };
-
-    const addLink = (sourceId: string, targetId: string) => {
-        const sourceNode = nodes.find(node => node.id === sourceId);
-        const targetNode = nodes.find(node => node.id === targetId);
-
-        if (sourceNode && targetNode) {
-            const newLink: CustomLink = { source: sourceNode, target: targetNode };
-            setLinks([...links, newLink]);
+        const nodesfromData = []
+        for (let i = 1; i <= v; i++) {
+            const node_x: number = Math.floor(Math.random() * (svgDimensions.width) + 10)
+            const node_y: number = Math.floor(Math.random() * (svgDimensions.height) + 10);
+            const newNode: CustomNode = {
+                id: `${i}`,
+                name: `${i}`,
+                x: (node_x < 10) ? node_x + 40 : ((node_x > (svgDimensions.width - 20)) ? node_x - 50 : node_x),
+                y: (node_y < 10) ? node_y + 40 : ((node_y > (svgDimensions.height - 20)) ? node_y - 50 : node_y)
+            }
+            nodesfromData.push(newNode)
         }
-    };
+        setNodes(nodesfromData)
+    }
+    // render link handle ------
+    const renderLink = function () {
+        const lines = data.split('\n')
+        const [v, e] = lines[0].split(" ").map(Number)
+        const linksfromData = lines.slice(1).map((line) => {
+            const [u, v, w] = line.split(" ").map(Number)
+            const startNode = nodes.find(node => node.id === u.toString());
+            const endNode = nodes.find(node => node.id === v.toString())
+
+            if (startNode && endNode) {
+                const newLink: CustomLink = { source: startNode, target: endNode, weight: w }
+                return newLink;
+            }
+            return undefined
+
+        }).filter((link): link is CustomLink => link !== undefined);
+        setLinks(linksfromData)
+    }
+
+    // render --------------------------------------
+    useEffect(() => {
+        const updateSvgDimensions = () => {
+            if (svgRef.current) {
+                const svg = svgRef.current;
+                const width = svg.clientWidth || parseFloat(svg.getAttribute('width') || '0');
+                const height = svg.clientHeight || parseFloat(svg.getAttribute('height') || '0');
+                setSvgDimensions({ width, height });
+            }
+        };
+        updateSvgDimensions();
+        window.addEventListener('resize', updateSvgDimensions);
+        return () => {
+            window.removeEventListener('resize', updateSvgDimensions);
+        };
+    }, []);
+    useEffect(() => {
+        RenderNode()
+        console.log(nodes)
+    }, [data, reDraw])
+    useEffect(() => {
+        renderLink();
+    }, [nodes])
+    // -----------------------------------------------------
+
 
     return (
         <>
             <ToolHeader graphType={handleGraphType} />
             <div className="flex bottom-0 w-full h-[1235px]">
-                {graphType && <InputDialog graphType={graphType} className="slide-in" />}
+                {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} />}
                 {/* <div className="top-0 h-auto">
                     <button onClick={addNode} className="m-2 p-2 bg-blue-500 text-white">Add Node</button>
                     <button onClick={() => addLink("1", "2")} className="m-2 p-2 bg-green-500 text-white">Add Link</button>
                 </div> */}
-                <svg className="w-full top-0 h-full bg-calcurlator-color-custom">
-                    {/* Links */}
-                    {links.map((link, index) => (
-                        <line
-                            key={`link-${index}`}
-                            x1={link.source.x}
-                            y1={link.source.y}
-                            x2={link.target.x}
-                            y2={link.target.y}
-                            strokeWidth={2}
-                            stroke="#999"
-                            strokeOpacity={0.6}
-                            strokeDasharray={link.dashed ? '8,4' : undefined}
-                        />
-                    ))}
-                    {/* Nodes */}
-                    {nodes.map((node, index) => (
-                        <g key={`node-${index}`}>
-                            <circle
-                                cx={node.x}
-                                cy={node.y}
-                                r={22}
-                                fill={node.color || "steelblue"}
-                            />
-                            <text
-                                x={node.x}
-                                y={node.y}
-                                textAnchor="middle"
-                                dominantBaseline="middle"
-                                fontSize={16}
-                                fontWeight='bold'
-                                fill="white"
-                            >
-                                {node.name}
-                            </text>
-                        </g>
-                    ))}
-                </svg>
-            </div>
+                <div className="h-full w-full px-1 py-1 border-x-2 border-y-2 ">
+                    <svg ref={svgRef} className="w-full top-0 h-full bg-gray-200">
+                        {/* Links */}
+                        {links.map((link, index) => {
+                            const midX = (link.source.x + link.target.x) / 2
+                            const midY = (link.source.y + link.target.y) / 2
+                            return (<g key={`link-${index}`}>
+                                <line
+                                    x1={link.source.x}
+                                    y1={link.source.y}
+                                    x2={link.target.x}
+                                    y2={link.target.y}
+                                    strokeWidth={2}
+                                    stroke="#999"
+                                    strokeOpacity={0.6}
+                                    strokeDasharray={link.dashed ? '8,4' : undefined}
+                                />
+                                <text
+                                    x={midX}
+                                    y={midY}
+                                    fill="black"
+                                    fontSize="16"
+                                    fontWeight='bold'
+                                    textAnchor="middle"
+                                    alignmentBaseline="middle"
+                                >
+                                    {link.weight || ""} {/* Hiển thị trọng số w */}
+                                </text>
+                            </g>)
+                        }
+                        )}
+                        {/* Nodes */}
+                        {nodes.map((node, index) => (
+                            <g key={`node-${index}`}>
+                                <circle
+                                    cx={node.x}
+                                    cy={node.y}
+                                    r={20}
+                                    fill={node.color || "steelblue"}
+                                />
+                                <text
+                                    x={node.x}
+                                    y={node.y}
+                                    textAnchor="middle"
+                                    dominantBaseline="middle"
+                                    fontSize={16}
+                                    fontWeight='bold'
+                                    fill="white"
+                                >
+                                    {node.id}
+                                </text>
+                            </g>
+                        ))}
+                    </svg>
+                </div>
+            </div >
         </>
     );
 };

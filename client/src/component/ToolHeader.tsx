@@ -33,14 +33,14 @@ const ToolHeader: React.FC<ToolHeaderProps> = function ({ graphType }) {
 
                         {/* Bảng lựa chọn */}
                         {showGraphSelection && (
-                            <div className="absolute top-full mt-0 left-0 bg-white border-neutral-300 rounded-b-xl hover:rounded-b-xl border-x  w-80 min-w-20 z-50">
+                            <div className="absolute top-full mt-0 left-0 bg-white border-neutral-300 rounded-b-xl hover:rounded-b-xl border-x border-b  w-80 min-w-20 z-50">
                                 <div className="flex flex-col h-full w-full items-start py-2">
                                     <button className="w-full hover:bg-slate-100 hover:text-blue-950 hover:font-bold text-[18px] pl-4 py-4 text-start  border-b "
                                         onClick={() => {
                                             graphType("directed");
                                             hanldleGraphSelection()
                                         }}>➡️ directed graph</button>
-                                    <button className="w-full hover:bg-slate-100 hover:text-blue-950 hover:font-bold text-[18px] pl-4 py-4 hover:rounded-b-xl text-start  "
+                                    <button className="w-full hover:bg-slate-100 hover:text-blue-950 hover:font-bold text-[18px] pl-4 py-4 text-start  "
                                         onClick={() => {
                                             graphType("undirected")
                                             hanldleGraphSelection();
