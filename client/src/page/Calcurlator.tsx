@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 // components
 import ToolHeader from "../component/ToolHeader";
+import InputDialog from "../component/InputDialog";
 
 
 // entities
@@ -26,10 +27,16 @@ const links_test = [
 ]
 // ------------------------------------------------------------
 // Main component =============================================
+
 const Calculator: React.FC = () => {
     const [nodes, setNodes] = useState<CustomNode[]>(nodes_test);
     const [links, setLinks] = useState<CustomLink[]>(links_test);
+    const [graphType, setGraphType] = useState("")
 
+    // get data from component
+    const handleGraphType = function (graphType: string) {
+        setGraphType(graphType)
+    }
 
     const addNode = () => {
         const newNode: CustomNode = {
@@ -54,12 +61,13 @@ const Calculator: React.FC = () => {
 
     return (
         <>
-            <ToolHeader />
-            <div className="bottom-0 w-full h-[1235px]">
-                <div className="top-0 h-auto">
+            <ToolHeader graphType={handleGraphType} />
+            <div className="flex bottom-0 w-full h-[1235px]">
+                {graphType && <InputDialog graphType={graphType} className="slide-in" />}
+                {/* <div className="top-0 h-auto">
                     <button onClick={addNode} className="m-2 p-2 bg-blue-500 text-white">Add Node</button>
                     <button onClick={() => addLink("1", "2")} className="m-2 p-2 bg-green-500 text-white">Add Link</button>
-                </div>
+                </div> */}
                 <svg className="w-full top-0 h-full bg-calcurlator-color-custom">
                     {/* Links */}
                     {links.map((link, index) => (
