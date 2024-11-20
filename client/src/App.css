@@ -19,7 +19,8 @@
 }
 
 .App-font {
-  font-family: 'Nunito Sans', sans-serif;
+  font-family: 'consolas', sans-serif;
+  color: #2A3663;
 }
 
 .App-logo {
@@ -29,7 +30,11 @@
 }
 
 .bg-color-custom {
-  background-color: #F5F7F8
+  background-color: #FAF7F0
+}
+
+.bg-hover-color {
+  background-color: #ECDFCC ;
 }
 
 
