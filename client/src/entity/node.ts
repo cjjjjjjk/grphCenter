@@ -3,5 +3,5 @@ export interface CustomNode {
     name: string;
     x: number;
     y: number;
-    color?: string;
+    flag?: boolean;
 }

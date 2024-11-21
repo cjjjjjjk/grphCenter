@@ -90,6 +90,7 @@ const Calculator: React.FC = () => {
                 const newNode: CustomNode = {
                     id: `${i}`,
                     name: `${i}`,
+                    flag: false,
                     x,
                     y,
                 };
@@ -106,10 +107,10 @@ const Calculator: React.FC = () => {
             if (line.trim()) {
                 const [u, v, w] = line.split(" ").map(Number)
                 const startNode = nodes.find(node => node.id === u.toString());
-                const endNode = nodes.find(node => node.id === v.toString())
-                if (!startNode || !endNode) return undefined
+                const endNode = nodes.find(node => node.id === v.toString());
+                if (!startNode || !endNode) return undefined;
                 if (startNode && endNode) {
-                    const newLink: CustomLink = { source: startNode, target: endNode, weight: w }
+                    const newLink: CustomLink = { source: startNode, target: endNode, weight: w, flag: false }
                     return newLink;
                 }
             }
@@ -167,17 +168,16 @@ const Calculator: React.FC = () => {
                                     y1={link.source.y}
                                     x2={link.target.x}
                                     y2={link.target.y}
-                                    strokeWidth={1}
-                                    stroke="#999"
+                                    strokeWidth={link.flag ? nodeRadious / 6 : 1}
+                                    stroke={link.flag ? "black" : "#A6AEBF"}
                                     strokeOpacity={1}
-                                    strokeDasharray={link.dashed ? '8,4' : undefined}
                                 />
                                 <text
                                     x={midX}
                                     y={midY}
-                                    fill="black"
+                                    fill={link.flag ? "red" : "#A6AEBF"}
                                     fontSize={nodeRadious}
-                                    fontWeight='bold'
+                                    fontWeight={link.flag ? "bold" : "1"}
                                     textAnchor="middle"
                                     alignmentBaseline="middle"
                                 >
@@ -193,7 +193,9 @@ const Calculator: React.FC = () => {
                                     cx={node.x}
                                     cy={node.y}
                                     r={nodeRadious}
-                                    fill={node.color || "steelblue"}
+                                    fill={node.flag ? "red" : "white"}
+                                    stroke={node.flag ? "black" : "lightgray"}
+                                    strokeWidth={Math.floor(nodeRadious / 4)}
                                 />
                                 <text
                                     x={node.x}
@@ -202,7 +204,7 @@ const Calculator: React.FC = () => {
                                     dominantBaseline="middle"
                                     fontSize={nodeRadious}
                                     fontWeight='bold'
-                                    fill="white"
+                                    fill={node.flag ? "white" : "black"}
                                 >
                                     {node.id}
                                 </text>

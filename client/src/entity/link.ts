@@ -4,5 +4,5 @@ export interface CustomLink {
     source: CustomNode;
     target: CustomNode;
     weight?: number;
-    dashed?: boolean;
+    flag?: boolean;
 }
