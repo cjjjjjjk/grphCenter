@@ -66,21 +66,44 @@ const Calculator: React.FC = () => {
     // render nodes, link from data -------------------------
     // render nodes handle---
 
-    const RenderNode = function () { // have numberof nodes input
+    const RenderNode = function () {
         if (numberofNodes) {
             const nodesfromData = []
             for (let i = 1; i <= numberofNodes; i++) {
-                const node_x: number = Math.floor(Math.random() * (svgDimensions.width) + 10)
-                const node_y: number = Math.floor(Math.random() * (svgDimensions.height) + 10);
+                const svgCenter = {
+                    x: Math.floor(svgDimensions.width / 2),
+                    y: Math.floor(svgDimensions.height / 2),
+                };
+
+                const sigmaX = (svgDimensions.width - 50) / 4;
+                const sigmaY = (svgDimensions.height - 50) / 4;
+
+                const randomGaussian = () => {
+                    let u = 0, v = 0;
+                    while (u === 0) u = Math.random();
+                    while (v === 0) v = Math.random();
+                    return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+                };
+                const x = Math.min(
+                    Math.max(svgCenter.x + sigmaX * randomGaussian(), 25),
+                    svgDimensions.width - 25
+                );
+                const y = Math.min(
+                    Math.max(svgCenter.y + sigmaY * randomGaussian(), 25),
+                    svgDimensions.height - 25
+                );
+
                 const newNode: CustomNode = {
                     id: `${i}`,
                     name: `${i}`,
-                    x: (node_x < 10) ? node_x + 40 : ((node_x > (svgDimensions.width - 20)) ? node_x - 50 : node_x),
-                    y: (node_y < 10) ? node_y + 40 : ((node_y > (svgDimensions.height - 20)) ? node_y - 50 : node_y),
-                }
-                nodesfromData.push(newNode)
+                    x,
+                    y,
+                };
+
+                nodesfromData.push(newNode);
             }
-            setNodes(nodesfromData)
+            setNodes(nodesfromData);
+
         }
     }
     // render link handle ------
