@@ -8,6 +8,7 @@ import InputDialog from "../component/InputDialog";
 // entities
 import { CustomNode } from "../entity/node";
 import { CustomLink } from "../entity/link";
+import { unstable_renderSubtreeIntoContainer } from "react-dom";
 
 // test data --------------------------------------------------
 const nodes_test =
@@ -64,34 +65,48 @@ const Calculator: React.FC = () => {
     }
     //-------------------------------------------------------
     // render nodes, link from data -------------------------
-    // render nodes handle---
 
+    const CreateNodePosition = function () {
+        const svgCenter = {
+            x: Math.floor(svgDimensions.width / 2),
+            y: Math.floor(svgDimensions.height / 2),
+        };
+        const sigmaX = (svgDimensions.width - 50) / 4;
+        const sigmaY = (svgDimensions.height - 50) / 4;
+
+        const randomGaussian = () => {
+            let u = 0, v = 0;
+            while (u === 0) u = Math.random();
+            while (v === 0) v = Math.random();
+            return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+        };
+        const x = Math.min(
+            Math.max(svgCenter.x + sigmaX * randomGaussian(), 25),
+            svgDimensions.width - 25
+        );
+        const y = Math.min(
+            Math.max(svgCenter.y + sigmaY * randomGaussian(), 25),
+            svgDimensions.height - 25
+        );
+
+        return { x, y }
+    }
+    // render nodes handle---
     const RenderNode = function () {
         if (numberofNodes) {
             const nodesfromData = []
             for (let i = 1; i <= numberofNodes; i++) {
-                const svgCenter = {
-                    x: Math.floor(svgDimensions.width / 2),
-                    y: Math.floor(svgDimensions.height / 2),
-                };
 
-                const sigmaX = (svgDimensions.width - 50) / 4;
-                const sigmaY = (svgDimensions.height - 50) / 4;
+                let validPosition = false;
+                let x = 0, y = 0;
 
-                const randomGaussian = () => {
-                    let u = 0, v = 0;
-                    while (u === 0) u = Math.random();
-                    while (v === 0) v = Math.random();
-                    return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
-                };
-                const x = Math.min(
-                    Math.max(svgCenter.x + sigmaX * randomGaussian(), 25),
-                    svgDimensions.width - 25
-                );
-                const y = Math.min(
-                    Math.max(svgCenter.y + sigmaY * randomGaussian(), 25),
-                    svgDimensions.height - 25
-                );
+                while (!validPosition) {
+                    ({ x, y } = CreateNodePosition());
+                    validPosition = nodesfromData.every(
+                        (storedNode) =>
+                            Math.sqrt((storedNode.x - x) ** 2 + (storedNode.y - y) ** 2) >= 20
+                    );
+                }
 
                 const newNode: CustomNode = {
                     id: `${i}`,
@@ -103,18 +118,18 @@ const Calculator: React.FC = () => {
                 nodesfromData.push(newNode);
             }
             setNodes(nodesfromData);
-
         }
     }
     // render link handle ------
     const renderLink = function () {
         const lines = data.split('\n')
+        if (!lines) return;
         const linksfromData = lines.slice().map((line) => {
             if (line.trim()) {
                 const [u, v, w] = line.split(" ").map(Number)
                 const startNode = nodes.find(node => node.id === u.toString());
                 const endNode = nodes.find(node => node.id === v.toString())
-
+                if (!startNode || !endNode) return undefined
                 if (startNode && endNode) {
                     const newLink: CustomLink = { source: startNode, target: endNode, weight: w }
                     return newLink;

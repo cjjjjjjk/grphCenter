@@ -19,7 +19,7 @@
 }
 
 .App-font {
-  font-family: 'consolas', sans-serif;
+  font-family: 'Consolas', sans-serif;
   color: #2A3663;
 }
 
@@ -52,4 +52,19 @@
   opacity: 60;
   transform: translateX(-100%); 
   animation: slideInLeft 0.1s ease-out forwards; 
+}
+
+
+@keyframes ripple {
+  to {
+      transform: scale(4);
+      opacity: 0;
+  }
+}
+
+.animate-ripple {
+  position: absolute;
+  transform: scale(0);
+  animation: ripple 0.5s linear;
+  pointer-events: none;
 }
