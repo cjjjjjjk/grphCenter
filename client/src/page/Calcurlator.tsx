@@ -8,7 +8,6 @@ import InputDialog from "../component/InputDialog";
 // entities
 import { CustomNode } from "../entity/node";
 import { CustomLink } from "../entity/link";
-import { redirect } from "react-router-dom";
 
 // test data --------------------------------------------------
 const nodes_test =
@@ -37,6 +36,8 @@ const Calculator: React.FC = () => {
     const [links, setLinks] = useState<CustomLink[]>([]);
     const [graphType, setGraphType] = useState("")
     const [data, setData] = useState("")
+    const [numberofNodes, setNumberOfNodes] = useState(NaN)
+    const [nodeRadious, setNodeRadious] = useState(15)
     const [reDraw, setReDraw] = useState(false)
 
     // get data from components------------------------
@@ -48,6 +49,15 @@ const Calculator: React.FC = () => {
     const graphData = function (data: string) {
         setData(data)
     }
+    const NumberOfNode = function (data: string) {
+        const parsedNumber = Number(data);
+
+        if (!isNaN(parsedNumber) && Number.isInteger(parsedNumber) && parsedNumber > 0) {
+            setNumberOfNodes(parsedNumber);
+        } else {
+            console.error("Invalid input: Please provide a valid positive integer.");
+        }
+    };
     // redraw graph -------------------
     const ReDraw = function (data: boolean) {
         setReDraw(!reDraw);
@@ -55,80 +65,89 @@ const Calculator: React.FC = () => {
     //-------------------------------------------------------
     // render nodes, link from data -------------------------
     // render nodes handle---
-    const RenderNode = function () {
-        const lines = data.split('\n')
-        const [v, e] = lines[0].split(" ").map(Number)
 
-        const nodesfromData = []
-        for (let i = 1; i <= v; i++) {
-            const node_x: number = Math.floor(Math.random() * (svgDimensions.width) + 10)
-            const node_y: number = Math.floor(Math.random() * (svgDimensions.height) + 10);
-            const newNode: CustomNode = {
-                id: `${i}`,
-                name: `${i}`,
-                x: (node_x < 10) ? node_x + 40 : ((node_x > (svgDimensions.width - 20)) ? node_x - 50 : node_x),
-                y: (node_y < 10) ? node_y + 40 : ((node_y > (svgDimensions.height - 20)) ? node_y - 50 : node_y)
+    const RenderNode = function () { // have numberof nodes input
+        if (numberofNodes) {
+            const nodesfromData = []
+            for (let i = 1; i <= numberofNodes; i++) {
+                const node_x: number = Math.floor(Math.random() * (svgDimensions.width) + 10)
+                const node_y: number = Math.floor(Math.random() * (svgDimensions.height) + 10);
+                const newNode: CustomNode = {
+                    id: `${i}`,
+                    name: `${i}`,
+                    x: (node_x < 10) ? node_x + 40 : ((node_x > (svgDimensions.width - 20)) ? node_x - 50 : node_x),
+                    y: (node_y < 10) ? node_y + 40 : ((node_y > (svgDimensions.height - 20)) ? node_y - 50 : node_y),
+                }
+                nodesfromData.push(newNode)
             }
-            nodesfromData.push(newNode)
+            setNodes(nodesfromData)
         }
-        setNodes(nodesfromData)
     }
     // render link handle ------
     const renderLink = function () {
         const lines = data.split('\n')
-        const [v, e] = lines[0].split(" ").map(Number)
-        const linksfromData = lines.slice(1).map((line) => {
-            const [u, v, w] = line.split(" ").map(Number)
-            const startNode = nodes.find(node => node.id === u.toString());
-            const endNode = nodes.find(node => node.id === v.toString())
+        const linksfromData = lines.slice().map((line) => {
+            if (line.trim()) {
+                const [u, v, w] = line.split(" ").map(Number)
+                const startNode = nodes.find(node => node.id === u.toString());
+                const endNode = nodes.find(node => node.id === v.toString())
 
-            if (startNode && endNode) {
-                const newLink: CustomLink = { source: startNode, target: endNode, weight: w }
-                return newLink;
+                if (startNode && endNode) {
+                    const newLink: CustomLink = { source: startNode, target: endNode, weight: w }
+                    return newLink;
+                }
             }
             return undefined
-
         }).filter((link): link is CustomLink => link !== undefined);
         setLinks(linksfromData)
     }
 
     // render --------------------------------------
     useEffect(() => {
-        const updateSvgDimensions = () => {
-            if (svgRef.current) {
-                const svg = svgRef.current;
-                const width = svg.clientWidth || parseFloat(svg.getAttribute('width') || '0');
-                const height = svg.clientHeight || parseFloat(svg.getAttribute('height') || '0');
-                setSvgDimensions({ width, height });
-            }
+        const svgElement = svgRef.current;
+        if (!svgElement) return;
+
+        const updateSize = () => {
+            setSvgDimensions({
+                width: svgElement.clientWidth,
+                height: svgElement.clientHeight,
+            });
         };
-        updateSvgDimensions();
-        window.addEventListener('resize', updateSvgDimensions);
+
+        const resizeObserver = new ResizeObserver(() => {
+            updateSize();
+        });
+
+        resizeObserver.observe(svgElement);
+
+        updateSize();
+
         return () => {
-            window.removeEventListener('resize', updateSvgDimensions);
+            resizeObserver.disconnect();
         };
     }, []);
     useEffect(() => {
         RenderNode()
-        console.log(nodes)
-    }, [data, reDraw])
+    }, [data, reDraw, svgDimensions])
     useEffect(() => {
         renderLink();
     }, [nodes])
+    useEffect(() => {
+        if (numberofNodes <= 10) setNodeRadious(18)
+        else if (numberofNodes <= 20) setNodeRadious(15);
+        else if (numberofNodes <= 50) setNodeRadious(10);
+        else setNodeRadious(5)
+    }, [numberofNodes])
     // -----------------------------------------------------
 
 
     return (
         <>
             <ToolHeader graphType={handleGraphType} />
-            <div className="flex bottom-0 w-full h-[1235px]">
-                {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} />}
-                {/* <div className="top-0 h-auto">
-                    <button onClick={addNode} className="m-2 p-2 bg-blue-500 text-white">Add Node</button>
-                    <button onClick={() => addLink("1", "2")} className="m-2 p-2 bg-green-500 text-white">Add Link</button>
-                </div> */}
-                <div className="h-full w-full px-1 py-1 border-x-2 border-y-2 ">
-                    <svg ref={svgRef} className="w-full top-0 h-full bg-gray-200">
+            <div className="flex bottom-0 w-full h-screen">
+                {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} />}
+                <div className="flex items-center justify-center w-full border border-black bg-gray-500">
+                    <svg ref={svgRef} className="w-[95%] h-5/6 bg-gray-200 shadow-sm shadow-black">
                         {/* Links */}
                         {links.map((link, index) => {
                             const midX = (link.source.x + link.target.x) / 2
@@ -139,21 +158,21 @@ const Calculator: React.FC = () => {
                                     y1={link.source.y}
                                     x2={link.target.x}
                                     y2={link.target.y}
-                                    strokeWidth={2}
+                                    strokeWidth={1}
                                     stroke="#999"
-                                    strokeOpacity={0.6}
+                                    strokeOpacity={1}
                                     strokeDasharray={link.dashed ? '8,4' : undefined}
                                 />
                                 <text
                                     x={midX}
                                     y={midY}
                                     fill="black"
-                                    fontSize="16"
+                                    fontSize={nodeRadious}
                                     fontWeight='bold'
                                     textAnchor="middle"
                                     alignmentBaseline="middle"
                                 >
-                                    {link.weight || ""} {/* Hiển thị trọng số w */}
+                                    {link.weight || ""}
                                 </text>
                             </g>)
                         }
@@ -164,7 +183,7 @@ const Calculator: React.FC = () => {
                                 <circle
                                     cx={node.x}
                                     cy={node.y}
-                                    r={20}
+                                    r={nodeRadious}
                                     fill={node.color || "steelblue"}
                                 />
                                 <text
@@ -172,7 +191,7 @@ const Calculator: React.FC = () => {
                                     y={node.y}
                                     textAnchor="middle"
                                     dominantBaseline="middle"
-                                    fontSize={16}
+                                    fontSize={nodeRadious}
                                     fontWeight='bold'
                                     fill="white"
                                 >

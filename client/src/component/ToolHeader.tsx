@@ -21,7 +21,7 @@ const ToolHeader: React.FC<ToolHeaderProps> = function ({ graphType }) {
                     <button className="fonr-bold mr-2 text-[1.5rem] hover:text-orange-500">≡</button>
                     <button className="font-bold mr-4 text-[1rem] hover:text-orange-500">gr<u>phCenter</u></button>
                     <div className="relative flex flex-col items-start ">
-                        <button className={`flex h-3/5 w-[6.5rem] items-center border rounded-full pl-[0.5rem] bg-white hover:text-white hover:font-bold hover:bg-black ${showGraphSelection ? 'bg-black shadow-sm text-white' : ''}`}
+                        <button className={`flex h-3/5 w-[6.5rem] items-center border rounded-full pl-[0.5rem] text-black bg-white hover:text-white hover:font-bold hover:bg-black ${showGraphSelection ? 'bg-black shadow-sm' : ''}`}
                             onClick={hanldleGraphSelection}>
                             <span className="z-100 text-[0.75rem]">🥠 import</span>
                             <svg className="fill-current size-6" aria-hidden="true" viewBox="0 0 24 24">
