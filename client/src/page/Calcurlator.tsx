@@ -8,24 +8,6 @@ import InputDialog from "../component/InputDialog";
 // entities
 import { CustomNode } from "../entity/node";
 import { CustomLink } from "../entity/link";
-import { unstable_renderSubtreeIntoContainer } from "react-dom";
-
-// test data --------------------------------------------------
-const nodes_test =
-    [
-        { id: "1", x: 500, y: 40, name: "1" },
-        { id: "2", x: 200, y: 250, name: "2" },
-        { id: "3", x: 300, y: 40, name: "3", color: '#26deb0' },
-        { id: "4", x: 1200, y: 800, name: "4", color: '#26deb0' },
-
-    ]
-const links_test = [
-    { source: nodes_test[0], target: nodes_test[1] },
-    { source: nodes_test[1], target: nodes_test[2] },
-    { source: nodes_test[2], target: nodes_test[0], dashed: true },
-    { source: nodes_test[3], target: nodes_test[0], dashed: true },
-
-]
 // ------------------------------------------------------------
 // Main component =============================================
 const Calculator: React.FC = () => {
@@ -65,7 +47,6 @@ const Calculator: React.FC = () => {
     }
     //-------------------------------------------------------
     // render nodes, link from data -------------------------
-
     const CreateNodePosition = function () {
         const svgCenter = {
             x: Math.floor(svgDimensions.width / 2),
@@ -99,7 +80,6 @@ const Calculator: React.FC = () => {
 
                 let validPosition = false;
                 let x = 0, y = 0;
-
                 while (!validPosition) {
                     ({ x, y } = CreateNodePosition());
                     validPosition = nodesfromData.every(
@@ -107,14 +87,12 @@ const Calculator: React.FC = () => {
                             Math.sqrt((storedNode.x - x) ** 2 + (storedNode.y - y) ** 2) >= 20
                     );
                 }
-
                 const newNode: CustomNode = {
                     id: `${i}`,
                     name: `${i}`,
                     x,
                     y,
                 };
-
                 nodesfromData.push(newNode);
             }
             setNodes(nodesfromData);
@@ -152,17 +130,11 @@ const Calculator: React.FC = () => {
             });
         };
 
-        const resizeObserver = new ResizeObserver(() => {
-            updateSize();
-        });
+        const resizeObserver = new ResizeObserver(() => { updateSize(); });
 
         resizeObserver.observe(svgElement);
-
         updateSize();
-
-        return () => {
-            resizeObserver.disconnect();
-        };
+        return () => { resizeObserver.disconnect(); };
     }, []);
     useEffect(() => {
         RenderNode()
@@ -178,13 +150,12 @@ const Calculator: React.FC = () => {
     }, [numberofNodes])
     // -----------------------------------------------------
 
-
     return (
         <>
             <ToolHeader graphType={handleGraphType} />
             <div className="flex bottom-0 w-full h-screen">
                 {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} />}
-                <div className="flex items-center justify-center w-full border border-black bg-gray-500">
+                <div className="flex items-center justify-center w-full border border-black bg-color-custom">
                     <svg ref={svgRef} className="w-[95%] h-5/6 bg-gray-200 shadow-sm shadow-black">
                         {/* Links */}
                         {links.map((link, index) => {

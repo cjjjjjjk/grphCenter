@@ -1,20 +1,23 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 
-//effects
+//effects ------------------------
 import { useRippleEffect } from "../effect/ripple";
-
+// -------------------------------
 interface ToolHeaderProps {
     graphType: (value: string) => void
 }
 
-const ToolHeader: React.FC<ToolHeaderProps> = function ({ graphType }) {
-    // effects
-    const addrippleEffect = useRippleEffect()
 
+// Main component =====================================================
+// header tool : import, export graphs handle -------------------------
+const ToolHeader: React.FC<ToolHeaderProps> = function ({ graphType }) {
+    // design effects ----------
+    const addrippleEffect = useRippleEffect()
+    // states
     const [showGraphSelection, setShowGraphSelection] = useState(false)
 
-    // design handler
+    // handlers
     const hanldleGraphSelection = function () {
         setShowGraphSelection(!showGraphSelection)
     }
@@ -39,7 +42,7 @@ const ToolHeader: React.FC<ToolHeaderProps> = function ({ graphType }) {
                             </svg>
                         </button>
 
-                        {/* Bảng lựa chọn */}
+
                         {showGraphSelection && (
                             <div className="absolute top-[1.8rem] z-50 w-[10rem] bg-white shadow-sm shadow-gray-700 border-l-2 border-gray-800 rounded-r-sm">
                                 <div className="flex flex-col py-2 text-[0.75rem]">
