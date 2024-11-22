@@ -25,6 +25,7 @@ const Calculator: React.FC = () => {
     const [numberofNodes, setNumberOfNodes] = useState<number>(NaN)
     const [nodeRadious, setNodeRadious] = useState<number>(15)
     const [reDraw, setReDraw] = useState<boolean>(false)
+    const [exploration, setExploration] = useState<string>("")
 
     const [minimumSpanningGraph, setMinimumSpanningGraph] = useState<{ nodes: CustomNode[], links: CustomLink[] }>({ nodes: [], links: [] })
     const [updateMinimum_spanTree, setUpdateMinimum_spanTree] = useState<boolean>(false)
@@ -33,6 +34,10 @@ const Calculator: React.FC = () => {
     // graph type : string ----------------
     const handleGraphType = function (graphType: string) {
         setGraphType(graphType)
+    }
+    // get graph exploration : haminton, mst, dfs, bfs, ...
+    const GetExploration = function (exploration_input: string) {
+        setExploration(exploration_input)
     }
     // graph data: string, multiple line --
     const graphData = function (data: string) {
@@ -148,9 +153,9 @@ const Calculator: React.FC = () => {
     // -----------------------------------------------------
 
     // Update Graph with algthrism ----------------------
-    const handleUpdateSpanningTree = function () {
-        setUpdateMinimum_spanTree(!updateMinimum_spanTree)
-    }
+    useEffect(() => {
+        if (exploration == "mst") setUpdateMinimum_spanTree(!updateMinimum_spanTree);
+    }, [exploration])
     useEffect(() => {
         const ResultGraph: { nodes: CustomNode[], links: CustomLink[] } = KruskalReturnNewNodesandLinks(nodes, links);
         if (!ResultGraph) return;
@@ -180,17 +185,15 @@ const Calculator: React.FC = () => {
         <>
             <ToolHeader graphType={handleGraphType} />
             <div className="flex bottom-0 w-full h-screen">
-                {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} />}
+                {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} Exploration={GetExploration} />}
                 <div className="flex items-center justify-center w-full border border-black bg-color-custom">
-                    <button className=" w-[2rem] bg-white"
-                        onClick={handleUpdateSpanningTree}>spanning test</button>
                     <svg ref={svgRef} className="w-[95%] h-5/6 bg-gray-200 shadow-sm shadow-black">
                         {/* Links */}
                         {links.map((link, index) => {
                             const midX = (link.source.x + link.target.x) / 2
                             const midY = (link.source.y + link.target.y) / 2
-                            return (<g key={`link-${index}`}>
-                                <line
+                            return (<g key={`link-${index} `} >
+                                <line className="transition-colors duration-1000"
                                     x1={link.source.x}
                                     y1={link.source.y}
                                     x2={link.target.x}
@@ -216,7 +219,7 @@ const Calculator: React.FC = () => {
                         {/* Nodes */}
                         {nodes.map((node, index) => (
                             <g key={`node-${index}`}>
-                                <circle
+                                <circle className="transition-colors duration-1000"
                                     cx={node.x}
                                     cy={node.y}
                                     r={nodeRadious}
