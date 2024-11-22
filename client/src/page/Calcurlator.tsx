@@ -8,22 +8,28 @@ import InputDialog from "../component/InputDialog";
 // entities
 import { CustomNode } from "../entity/node";
 import { CustomLink } from "../entity/link";
+
+// algothirisms
+import { KruskalReturnNewNodesandLinks } from "../algothrism/kruskal";
 // ------------------------------------------------------------
 // Main component =============================================
 const Calculator: React.FC = () => {
     // element demantion ----------------------
     const svgRef = useRef<SVGSVGElement | null>(null);
-    const [svgDimensions, setSvgDimensions] = useState({ width: 0, height: 0 });
-
+    const [svgDimensions, setSvgDimensions] = useState<{ width: number, height: number }>({ width: 0, height: 0 });
+    // state ----------------------------------
     const [nodes, setNodes] = useState<CustomNode[]>([]);
     const [links, setLinks] = useState<CustomLink[]>([]);
-    const [graphType, setGraphType] = useState("")
-    const [data, setData] = useState("")
-    const [numberofNodes, setNumberOfNodes] = useState(NaN)
-    const [nodeRadious, setNodeRadious] = useState(15)
-    const [reDraw, setReDraw] = useState(false)
+    const [graphType, setGraphType] = useState<string>("")
+    const [data, setData] = useState<string>("")
+    const [numberofNodes, setNumberOfNodes] = useState<number>(NaN)
+    const [nodeRadious, setNodeRadious] = useState<number>(15)
+    const [reDraw, setReDraw] = useState<boolean>(false)
 
-    // get data from components------------------------
+    const [minimumSpanningGraph, setMinimumSpanningGraph] = useState<{ nodes: CustomNode[], links: CustomLink[] }>({ nodes: [], links: [] })
+    const [updateMinimum_spanTree, setUpdateMinimum_spanTree] = useState<boolean>(false)
+
+    // get data from components-------------------------------
     // graph type : string ----------------
     const handleGraphType = function (graphType: string) {
         setGraphType(graphType)
@@ -72,53 +78,6 @@ const Calculator: React.FC = () => {
 
         return { x, y }
     }
-    // render nodes handle---
-    const RenderNode = function () {
-        if (numberofNodes) {
-            const nodesfromData = []
-            for (let i = 1; i <= numberofNodes; i++) {
-
-                let validPosition = false;
-                let x = 0, y = 0;
-                while (!validPosition) {
-                    ({ x, y } = CreateNodePosition());
-                    validPosition = nodesfromData.every(
-                        (storedNode) =>
-                            Math.sqrt((storedNode.x - x) ** 2 + (storedNode.y - y) ** 2) >= 20
-                    );
-                }
-                const newNode: CustomNode = {
-                    id: `${i}`,
-                    name: `${i}`,
-                    flag: false,
-                    x,
-                    y,
-                };
-                nodesfromData.push(newNode);
-            }
-            setNodes(nodesfromData);
-        }
-    }
-    // render link handle ------
-    const renderLink = function () {
-        const lines = data.split('\n')
-        if (!lines) return;
-        const linksfromData = lines.slice().map((line) => {
-            if (line.trim()) {
-                const [u, v, w] = line.split(" ").map(Number)
-                const startNode = nodes.find(node => node.id === u.toString());
-                const endNode = nodes.find(node => node.id === v.toString());
-                if (!startNode || !endNode) return undefined;
-                if (startNode && endNode) {
-                    const newLink: CustomLink = { source: startNode, target: endNode, weight: w, flag: false }
-                    return newLink;
-                }
-            }
-            return undefined
-        }).filter((link): link is CustomLink => link !== undefined);
-        setLinks(linksfromData)
-    }
-
     // render --------------------------------------
     useEffect(() => {
         const svgElement = svgRef.current;
@@ -137,12 +96,49 @@ const Calculator: React.FC = () => {
         updateSize();
         return () => { resizeObserver.disconnect(); };
     }, []);
+    // render basic graph 
     useEffect(() => {
-        RenderNode()
-    }, [data, reDraw, svgDimensions])
-    useEffect(() => {
-        renderLink();
-    }, [nodes])
+        // render nodes: declare node's properties ---
+        const nodesfromData: CustomNode[] = []
+        for (let i = 1; i <= numberofNodes; i++) {
+            let validPosition = false;
+            let x = 0, y = 0;
+            while (!validPosition) {
+                ({ x, y } = CreateNodePosition());
+                validPosition = nodesfromData.every(
+                    (storedNode) =>
+                        Math.sqrt((storedNode.x - x) ** 2 + (storedNode.y - y) ** 2) >= nodeRadious * 4
+                );
+            }
+            const newNode: CustomNode = {
+                id: `${i}`,
+                name: `${i}`,
+                flag: false,
+                x, y,
+            };
+            nodesfromData.push(newNode);
+        }
+        // declare link's properties -----------------
+        const lines = data.split('\n')
+        if (!lines) return;
+        const linksfromData = lines.slice().map((line) => {
+            if (line.trim()) {
+                const [u, v, w] = line.split(" ").map(Number)
+                const startNode = nodesfromData.find(node => node.id === u.toString());
+                const endNode = nodesfromData.find(node => node.id === v.toString());
+                if (!startNode || !endNode) return undefined;
+                if (startNode && endNode) {
+                    const newLink: CustomLink = { source: startNode, target: endNode, weight: w, flag: false }
+                    return newLink;
+                }
+            }
+            return undefined
+        }).filter((link): link is CustomLink => link !== undefined);
+        setNodes(nodesfromData);
+        setLinks(linksfromData)
+    }, // recall when: newdata, redraw , change svg size 
+        [data, reDraw, svgDimensions])
+    // update radious 
     useEffect(() => {
         if (numberofNodes <= 10) setNodeRadious(18)
         else if (numberofNodes <= 20) setNodeRadious(15);
@@ -151,12 +147,43 @@ const Calculator: React.FC = () => {
     }, [numberofNodes])
     // -----------------------------------------------------
 
+    // Update Graph with algthrism ----------------------
+    const handleUpdateSpanningTree = function () {
+        setUpdateMinimum_spanTree(!updateMinimum_spanTree)
+    }
+    useEffect(() => {
+        const ResultGraph: { nodes: CustomNode[], links: CustomLink[] } = KruskalReturnNewNodesandLinks(nodes, links);
+        if (!ResultGraph) return;
+
+        setNodes((prevNodes) => {
+            return prevNodes.map((node) => {
+                const updatedNode = ResultGraph.nodes.find(newNode => newNode.id === node.id);
+                if (updatedNode) {
+                    return { ...node, ...updatedNode };
+                }
+                return node;
+            });
+        });
+        setLinks((prevLinks) => {
+            return prevLinks.map((link) => {
+                const updatedLink = ResultGraph.links.find(newLink =>
+                    newLink.source.id === link.source.id && newLink.target.id === link.target.id);
+                if (updatedLink) {
+                    return { ...link, ...updatedLink };
+                }
+                return link;
+            });
+        });
+    }, [updateMinimum_spanTree]);
+
     return (
         <>
             <ToolHeader graphType={handleGraphType} />
             <div className="flex bottom-0 w-full h-screen">
                 {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} />}
                 <div className="flex items-center justify-center w-full border border-black bg-color-custom">
+                    <button className=" w-[2rem] bg-white"
+                        onClick={handleUpdateSpanningTree}>spanning test</button>
                     <svg ref={svgRef} className="w-[95%] h-5/6 bg-gray-200 shadow-sm shadow-black">
                         {/* Links */}
                         {links.map((link, index) => {

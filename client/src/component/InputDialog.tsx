@@ -49,7 +49,6 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                         className="relative overflow-hidden px-4 text-[0.75rem] py-1 font-bold bg-white text-black border border-black hover:border-white transition-all rounded-full hover:bg-black hover:text-white  duration-500"
                         onClick={(e) => {
                             addrippleEffect(e)
-
                             handleRedraw();
                             if (isDrawed && data) ReDraw(true);
                             if (data) seIsDrawed(true);
