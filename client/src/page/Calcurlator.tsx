@@ -18,6 +18,8 @@ const Calculator: React.FC = () => {
     const svgRef = useRef<SVGSVGElement | null>(null);
     const [svgDimensions, setSvgDimensions] = useState<{ width: number, height: number }>({ width: 0, height: 0 });
     // state ----------------------------------
+    const [base_nodes, setBaseNodes] = useState<CustomNode[]>([])
+    const [base_links, setBaseLinks] = useState<CustomLink[]>([])
     const [nodes, setNodes] = useState<CustomNode[]>([]);
     const [links, setLinks] = useState<CustomLink[]>([]);
     const [graphType, setGraphType] = useState<string>("")
@@ -27,15 +29,13 @@ const Calculator: React.FC = () => {
     const [reDraw, setReDraw] = useState<boolean>(false)
     const [exploration, setExploration] = useState<string>("")
 
-    const [minimumSpanningGraph, setMinimumSpanningGraph] = useState<{ nodes: CustomNode[], links: CustomLink[] }>({ nodes: [], links: [] })
-    const [updateMinimum_spanTree, setUpdateMinimum_spanTree] = useState<boolean>(false)
-
+    const [rs_MST, setRs_MST] = useState<number>(NaN)
     // get data from components-------------------------------
     // graph type : string ----------------
     const handleGraphType = function (graphType: string) {
         setGraphType(graphType)
     }
-    // get graph exploration : haminton, mst, dfs, bfs, ...
+    // get graph exploration : hamiton, mst, dfs, bfs, ...
     const GetExploration = function (exploration_input: string) {
         setExploration(exploration_input)
     }
@@ -139,6 +139,8 @@ const Calculator: React.FC = () => {
             }
             return undefined
         }).filter((link): link is CustomLink => link !== undefined);
+        setBaseNodes(nodesfromData)
+        setBaseLinks(linksfromData)
         setNodes(nodesfromData);
         setLinks(linksfromData)
     }, // recall when: newdata, redraw , change svg size 
@@ -154,12 +156,17 @@ const Calculator: React.FC = () => {
 
     // Update Graph with algthrism ----------------------
     useEffect(() => {
-        if (exploration == "mst") setUpdateMinimum_spanTree(!updateMinimum_spanTree);
-    }, [exploration])
-    useEffect(() => {
-        const ResultGraph: { nodes: CustomNode[], links: CustomLink[] } = KruskalReturnNewNodesandLinks(nodes, links);
-        if (!ResultGraph) return;
-
+        var ResultGraph: { nodes: CustomNode[], links: CustomLink[], MST?: number }
+        if (exploration == "mst") {
+            ResultGraph = KruskalReturnNewNodesandLinks(nodes, links)
+            setRs_MST(ResultGraph.MST ? ResultGraph.MST : NaN)
+        }
+        else if (exploration == "hamiton") {
+            ResultGraph = { nodes: base_nodes, links: base_links }
+        }
+        else {
+            ResultGraph = { nodes: base_nodes, links: base_links }
+        }
         setNodes((prevNodes) => {
             return prevNodes.map((node) => {
                 const updatedNode = ResultGraph.nodes.find(newNode => newNode.id === node.id);
@@ -179,13 +186,13 @@ const Calculator: React.FC = () => {
                 return link;
             });
         });
-    }, [updateMinimum_spanTree]);
+    }, [exploration])
 
     return (
         <>
             <ToolHeader graphType={handleGraphType} />
             <div className="flex bottom-0 w-full h-screen">
-                {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} Exploration={GetExploration} />}
+                {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} Exploration={GetExploration} MST={rs_MST} />}
                 <div className="flex items-center justify-center w-full border border-black bg-color-custom">
                     <svg ref={svgRef} className="w-[95%] h-5/6 bg-gray-200 shadow-sm shadow-black">
                         {/* Links */}

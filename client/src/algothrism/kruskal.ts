@@ -1,11 +1,5 @@
 import { CustomNode } from "../entity/node"
 import { CustomLink } from "../entity/link"
-import { tickStep, union } from "d3"
-
-interface Graph {
-    nodes: CustomNode[],
-    links: CustomLink[]
-}
 
 class UnionFind {
     parent: Map<string, string | undefined>;
@@ -40,11 +34,12 @@ class UnionFind {
 
 }
 
-export function KruskalReturnNewNodesandLinks(nodes_input: CustomNode[], links_input: CustomLink[]): { nodes: CustomNode[], links: CustomLink[] } {
+export function KruskalReturnNewNodesandLinks(nodes_input: CustomNode[], links_input: CustomLink[]): { nodes: CustomNode[], links: CustomLink[], MST: number } {
     const unionfind = new UnionFind(nodes_input)
-    let rs_nodes = nodes_input;
-    let rs_links = links_input;
-
+    // copy input graph.
+    let rs_nodes = nodes_input.map(node => ({ ...node }));
+    let rs_links = links_input.map(link => ({ ...link }));
+    let rs_MST: number = 0;
     const sorted_link = [...links_input].sort((a, b) => (a.weight ? a.weight : 0) - (b.weight ? b.weight : 0))
 
     for (const link of sorted_link) {
@@ -52,7 +47,8 @@ export function KruskalReturnNewNodesandLinks(nodes_input: CustomNode[], links_i
         if (unionfind.find(source.id) != unionfind.find(target.id)) {
             rs_links.map(flag_link => {
                 if (flag_link.source.id == source.id && flag_link.target.id == target.id) {
-                    flag_link.flag = true
+                    flag_link.flag = true;
+                    rs_MST += flag_link.weight ? flag_link.weight : 0;
                     return flag_link
                 } else return flag_link
             });
@@ -69,5 +65,5 @@ export function KruskalReturnNewNodesandLinks(nodes_input: CustomNode[], links_i
         }
     }
 
-    return { nodes: rs_nodes, links: rs_links };
+    return { nodes: rs_nodes, links: rs_links, MST: rs_MST };
 }
