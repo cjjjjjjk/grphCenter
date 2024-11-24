@@ -11,13 +11,14 @@ interface ComponentInputProps {
     ReDraw: (data: boolean) => void
     Exploration: (algorithm: string) => void,
     MST: number,
+    HAMITON: boolean
 }
 
-const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, className, dataHandler, ReDraw, NumberOfNode, Exploration, MST }) {
+const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, className, dataHandler, ReDraw, NumberOfNode, Exploration, MST, HAMITON }) {
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
-    const [isDrawed, seIsDrawed] = useState(false)
-    const [data, setData] = useState("1 2 1\n1 3 4\n1 5 1\n2 4 2\n2 5 1\n3 4 3\n3 5 3\n4 5 2")
-    const [numberOfNode, setNumberOfNodes] = useState("5")
+    const [isDrawed, setIsDrawed] = useState(false)
+    const [data, setData] = useState("1 3\n1 5\n1 7\n2 4\n2 5\n2 6\n3 4\n3 5 \n3 7\n4 6\n4 7\n5 7\n6 7")
+    const [numberOfNode, setNumberOfNodes] = useState("7")
     const [exploration, setExploration] = useState<string>("")
 
     // effects 
@@ -35,7 +36,7 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
         dataHandler(data);
         NumberOfNode(numberOfNode);
         if (isDrawed && data) ReDraw(true);
-        if (data) seIsDrawed(true);
+        if (data) setIsDrawed(true);
     };
 
     return (
@@ -60,18 +61,19 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                     {(isDrawed && data) && <button
                         className="relative overflow-hidden mr-4 px-4 text-[0.75rem] py-1 font-bold bg-white text-black border border-black hover:border-white transition-all rounded-full hover:bg-red-600 hover:text-white whitespace-nowrap duration-500"
                         onClick={(e) => {
+                            setIsDrawed(false)
                             addrippleEffect(e);
                             ClearTextArea()
                         }}>clear</button>}
                     <button
                         className={`relative overflow-hidden px-4 text-[0.75rem] py-1 font-bold bg-white text-black border border-black hover:border-white transition-all rounded-full hover:bg-black hover:text-white whitespace-nowrap duration-500`}
                         onClick={(e) => {
+                            addrippleEffect(e)
                             setExploration("")
                             Exploration("")
-                            addrippleEffect(e)
                             handleRedraw();
                             if (isDrawed && data) ReDraw(true);
-                            if (data) seIsDrawed(true);
+                            if (data) setIsDrawed(true);
                         }}>
                         {isDrawed && data ? "draw again" : "draw"}
                     </button>
@@ -82,26 +84,27 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                         className={`w-full text-left transition-color duration-500  whitespace-nowrap ${exploration === "mst" ? " bg-black text-white" : "hover:text-[#003161] hover:underline"}`}
                         onClick={() => {
                             if (exploration == "mst") {
-                                setExploration("");
-                                Exploration("")
+                                setExploration("none");
+                                Exploration("none")
                             } else {
                                 setExploration("mst");
                                 Exploration("mst");
                             }
                         }}>{">>"}mst
-                        {!isNaN(MST) && exploration !== "" && <span className={`ml-[6rem] !no-underline`}>MST: {MST}</span>}</button>
+                        {exploration == "mst" && <span className={`ml-[6rem] !no-underline`}>MST: {isNaN(MST) ? 0 : MST}</span>}</button>
                     <button
-                        className={`w-full text-left hover:underline transition-color duration-500   whitespace-nowrap ${exploration === "hamiton" ? "underline bg-black text-white" : "hover:text-[#003161]"}`}
+                        className={`w-full text-left transition-color duration-500  whitespace-nowrap ${exploration === "hamiton" ? "bg-black text-white" : "hover:text-[#003161] hover:underline"}`}
                         onClick={() => {
                             if (exploration == "hamiton") {
-                                setExploration("");
-                                Exploration("")
+                                setExploration("none");
+                                Exploration("none")
                             } else {
 
                                 setExploration("hamiton");
                                 Exploration("hamiton")
                             }
-                        }}>{">>"}hamiton</button>
+                        }}>{">>"}hamiton
+                        {exploration == "hamiton" && <span className={`ml-[4.5rem] !no-underline`}>{HAMITON ? "true" : "false"}</span>}</button>
                 </div>}
             </div>
         </div >

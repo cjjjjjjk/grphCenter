@@ -11,6 +11,7 @@ import { CustomLink } from "../entity/link";
 
 // algothirisms
 import { KruskalReturnNewNodesandLinks } from "../algothrism/kruskal";
+import { HamiltonReturnNewGraph } from "../algothrism/hamiton";
 // ------------------------------------------------------------
 // Main component =============================================
 const Calculator: React.FC = () => {
@@ -30,6 +31,7 @@ const Calculator: React.FC = () => {
     const [exploration, setExploration] = useState<string>("")
 
     const [rs_MST, setRs_MST] = useState<number>(NaN)
+    const [rs_Hamiton, seRs_Hamiton] = useState<boolean>(false)
     // get data from components-------------------------------
     // graph type : string ----------------
     const handleGraphType = function (graphType: string) {
@@ -156,17 +158,19 @@ const Calculator: React.FC = () => {
 
     // Update Graph with algthrism ----------------------
     useEffect(() => {
-        var ResultGraph: { nodes: CustomNode[], links: CustomLink[], MST?: number }
+        var ResultGraph: { nodes: CustomNode[], links: CustomLink[], MST?: number, hamiton?: boolean } = { nodes: base_nodes, links: base_links };
         if (exploration == "mst") {
-            ResultGraph = KruskalReturnNewNodesandLinks(nodes, links)
+            ResultGraph = KruskalReturnNewNodesandLinks(base_nodes, base_links)
             setRs_MST(ResultGraph.MST ? ResultGraph.MST : NaN)
         }
         else if (exploration == "hamiton") {
-            ResultGraph = { nodes: base_nodes, links: base_links }
+            ResultGraph = HamiltonReturnNewGraph(base_nodes, base_links, numberofNodes)
+            seRs_Hamiton(ResultGraph.hamiton ? ResultGraph.hamiton : false)
         }
-        else {
-            ResultGraph = { nodes: base_nodes, links: base_links }
+        else if (exploration == "") {
+            return;
         }
+        else { }
         setNodes((prevNodes) => {
             return prevNodes.map((node) => {
                 const updatedNode = ResultGraph.nodes.find(newNode => newNode.id === node.id);
@@ -192,7 +196,7 @@ const Calculator: React.FC = () => {
         <>
             <ToolHeader graphType={handleGraphType} />
             <div className="flex bottom-0 w-full h-screen">
-                {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} Exploration={GetExploration} MST={rs_MST} />}
+                {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} Exploration={GetExploration} MST={rs_MST} HAMITON={rs_Hamiton} />}
                 <div className="flex items-center justify-center w-full border border-black bg-color-custom">
                     <svg ref={svgRef} className="w-[95%] h-5/6 bg-gray-200 shadow-sm shadow-black">
                         {/* Links */}

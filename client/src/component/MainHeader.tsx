@@ -8,7 +8,7 @@ const MainHeader: React.FC = function () {
     return (
         <>
             {!hideHeader &&
-                <header className="sticky top-0 z-50 bg-color-custom h-[72px] flex items-center justify-center border-l-2" >
+                <header className="sticky top-0 z-50 bg-color-custom h-[72px] flex items-center justify-center " >
                     <div className='relative flex size-full flex-col items-center '>
                         <div className='absolute top-0 size-full'>
                             <div className='size-full border-b border-neutral-300'>
