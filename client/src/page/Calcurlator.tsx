@@ -146,7 +146,7 @@ const Calculator: React.FC = () => {
         setNodes(nodesfromData);
         setLinks(linksfromData)
     }, // recall when: newdata, redraw , change svg size 
-        [data, reDraw, svgDimensions])
+        [reDraw, svgDimensions])
     // update radious 
     useEffect(() => {
         if (numberofNodes <= 10) setNodeRadious(18)
