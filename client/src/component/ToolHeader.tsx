@@ -23,7 +23,7 @@ const ToolHeader: React.FC<ToolHeaderProps> = function ({ graphType }) {
     }
 
     return (
-        <header className="fixed top-0 z-50 h-[2.5rem] w-full bg-white pl-[1rem] pr-[1rem] App-font text-[1rem] border-b shadow-sm shadow-black ">
+        <header className="fixed top-0 z-50 h-[2.5rem] w-full bg-white pl-[0.75rem] pr-[1rem] App-font text-[1rem] border-b shadow-sm shadow-black ">
             <div className="w-full h-full flex ">
                 <div className="flex items-center">
                     <button className="fonr-bold mr-2 text-black text-[1.5rem]">≡</button>
