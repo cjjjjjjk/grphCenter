@@ -5,7 +5,6 @@ import Information from "./Information";
 
 // effects
 import { useRippleEffect } from "../effect/ripple";
-import { setSelectionRange } from "@testing-library/user-event/dist/utils";
 interface ComponentInputProps {
     graphType: string,
     className: string,
@@ -86,7 +85,7 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                     <button
                         className={`w-full text-left transition-color duration-100  whitespace-nowrap ${exploration === "mst" ? " bg-black text-white" : "hover:text-[#003161] hover:underline"}`}
                         onClick={() => {
-                            if (exploration == "mst") {
+                            if (exploration === "mst") {
                                 setExploration("none");
                                 Exploration("none")
                             } else {
@@ -94,12 +93,12 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                                 Exploration("mst");
                             }
                         }}>{">>"}mst
-                        {exploration == "mst" && <span className={`ml-[6rem] !no-underline`}>MST: {isNaN(MST) ? 0 : MST}</span>}</button>
-                    {exploration == "mst" && <Information headerName="minimum spanning tree" type="mst" />}
+                        {exploration === "mst" && <span className={`ml-[6rem] !no-underline`}>MST: {isNaN(MST) ? 0 : MST}</span>}</button>
+                    {exploration === "mst" && <Information headerName="minimum spanning tree" type="mst" />}
                     <button
                         className={`w-full text-left transition-color duration-100  whitespace-nowrap ${exploration === "hamiton" ? "bg-black text-white" : "hover:text-[#003161] hover:underline"}`}
                         onClick={() => {
-                            if (exploration == "hamiton") {
+                            if (exploration === "hamiton") {
                                 setExploration("none");
                                 Exploration("none")
                             } else {
@@ -107,13 +106,13 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                                 Exploration("hamiton")
                             }
                         }}>{">>"}hamilton
-                        {exploration == "hamiton" && <span className={`ml-[4.5rem] font-bold ${HAMITON ? "text-blue-400" : "text-red-400"}`}>{HAMITON ? "true" : "false"}</span>}</button>
-                    {exploration == "hamiton" && <Information headerName="hamiltonian graph" type="hamiton" />}
+                        {exploration === "hamiton" && <span className={`ml-[4.5rem] font-bold ${HAMITON ? "text-blue-400" : "text-red-400"}`}>{HAMITON ? "true" : "false"}</span>}</button>
+                    {exploration === "hamiton" && <Information headerName="hamiltonian graph" type="hamilton" />}
                     <div className="flex w-full">
                         <button
                             className={`flex justify-between items-center whitespace-nowrap ${exploration === "dfs" ? "w-[80%] bg-black text-white" : "w-full hover:text-[#003161] hover:underline"}`}
                             onClick={() => {
-                                if (exploration == "dfs") {
+                                if (exploration === "dfs") {
                                     setExploration("none");
                                     Exploration("none")
                                 } else {
@@ -122,10 +121,10 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                                     Exploration("dfs")
                                 }
                             }}>{">>"}dfs
-                            {exploration == "dfs" && <span className={`text-[0.5rem] text-right transition-none mr-1`}>starting vertex:</span>}</button>
-                        {exploration == "dfs" && <button className={`w-[18%] ml-[0.1rem] rounded-r-lg bg-gray-600 text-white hover:bg-black hover:text-white text-center`}>{numberOfNode}</button>}
+                            {exploration === "dfs" && <span className={`text-[0.5rem] text-right transition-none mr-1`}>starting vertex:</span>}</button>
+                        {exploration === "dfs" && <button className={`w-[18%] ml-[0.1rem] rounded-r-lg bg-gray-600 text-white hover:bg-black hover:text-white text-center`}>{numberOfNode}</button>}
                     </div>
-                    {exploration == "dfs" && (<Information headerName="depth first search" type="dfs" />)}
+                    {exploration === "dfs" && (<Information headerName="depth first search" type="dfs" />)}
                 </div>}
             </div>
         </div >
