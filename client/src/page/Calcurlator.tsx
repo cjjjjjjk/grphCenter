@@ -12,6 +12,7 @@ import { CustomLink } from "../entity/link";
 // algothirisms
 import { KruskalReturnNewNodesandLinks } from "../algothrism/kruskal";
 import { HamiltonReturnNewGraph } from "../algothrism/hamiton";
+import DFSReturnNewGraph from "../algothrism/dfs";
 // ------------------------------------------------------------
 // Main component =============================================
 const Calculator: React.FC = () => {
@@ -32,6 +33,9 @@ const Calculator: React.FC = () => {
 
     const [rs_MST, setRs_MST] = useState<number>(NaN)
     const [rs_Hamiton, seRs_Hamiton] = useState<boolean>(false)
+
+    const [DFS_Start, setDFS_Start] = useState("")
+    const [BFS_Start, setBFS_Start] = useState("")
     // get data from components-------------------------------
     // graph type : string ----------------
     const handleGraphType = function (graphType: string) {
@@ -143,6 +147,8 @@ const Calculator: React.FC = () => {
         }).filter((link): link is CustomLink => link !== undefined);
         setBaseNodes(nodesfromData)
         setBaseLinks(linksfromData)
+        setDFS_Start(nodesfromData[0]?.id)
+        setBFS_Start(nodesfromData[0]?.id)
         setNodes(nodesfromData);
         setLinks(linksfromData)
     }, // recall when: newdata, redraw , change svg size 
@@ -166,6 +172,9 @@ const Calculator: React.FC = () => {
         else if (exploration == "hamiton") {
             ResultGraph = HamiltonReturnNewGraph(base_nodes, base_links, numberofNodes)
             seRs_Hamiton(ResultGraph.hamiton ? ResultGraph.hamiton : false)
+        }
+        else if (exploration == "dfs") {
+            ResultGraph = DFSReturnNewGraph({ nodes: base_nodes, links: base_links, startNode: DFS_Start })
         }
         else if (exploration == "") {
             return;
@@ -196,7 +205,7 @@ const Calculator: React.FC = () => {
         <>
             <ToolHeader graphType={handleGraphType} />
             <div className="flex bottom-0 w-full h-screen">
-                {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} Exploration={GetExploration} MST={rs_MST} HAMITON={rs_Hamiton} />}
+                {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} Exploration={GetExploration} MST={rs_MST} HAMITON={rs_Hamiton} DFS_Start={DFS_Start} BFS_Start={BFS_Start} />}
                 <div className="flex items-center justify-center w-full border border-black bg-color-custom">
                     <svg ref={svgRef} className="w-[95%] h-5/6 bg-gray-200 shadow-sm shadow-black">
                         {/* Links */}

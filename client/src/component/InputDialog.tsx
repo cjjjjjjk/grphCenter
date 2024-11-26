@@ -13,10 +13,12 @@ interface ComponentInputProps {
     ReDraw: (data: boolean) => void
     Exploration: (algorithm: string) => void,
     MST: number,
-    HAMITON: boolean
+    HAMITON: boolean,
+    DFS_Start?: string,
+    BFS_Start?: string
 }
 
-const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, className, dataHandler, ReDraw, NumberOfNode, Exploration, MST, HAMITON }) {
+const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, className, dataHandler, ReDraw, NumberOfNode, Exploration, MST, HAMITON, DFS_Start, BFS_Start }) {
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
     const [isDrawed, setIsDrawed] = useState(false)
     const [data, setData] = useState("1 3\n1 5\n1 7\n2 4\n2 5\n2 6\n3 4\n3 5 \n3 7\n4 6\n4 7\n5 7\n6 7")
@@ -116,13 +118,12 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                                     setExploration("none");
                                     Exploration("none")
                                 } else {
-
                                     setExploration("dfs");
                                     Exploration("dfs")
                                 }
                             }}>{">>"}dfs
                             {exploration === "dfs" && <span className={`text-[0.5rem] text-right transition-none mr-1`}>starting vertex:</span>}</button>
-                        {exploration === "dfs" && <button className={`w-[18%] ml-[0.1rem] rounded-r-lg bg-gray-600 text-white hover:bg-black hover:text-white text-center`}>{numberOfNode}</button>}
+                        {exploration === "dfs" && <button className={`w-[18%] ml-[0.1rem] rounded-r-lg bg-gray-600 text-white hover:bg-black hover:text-white text-center`}>{DFS_Start}</button>}
                     </div>
                     {exploration === "dfs" && (<Information headerName="depth first search" type="dfs" />)}
                 </div>}
