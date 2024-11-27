@@ -49,6 +49,18 @@ const Calculator: React.FC = () => {
     const graphData = function (data: string) {
         setData(data)
     }
+    // get node start: dfs, bfs
+    const getNodeStart = function (node: string) {
+        if (exploration == "dfs") {
+            setDFS_Start(node);
+            return;
+        }
+        if (exploration == "bfs") {
+            setBFS_Start(node)
+            return;
+        }
+        return;
+    }
     const NumberOfNode = function (data: string) {
         const parsedNumber = Number(data);
 
@@ -199,7 +211,7 @@ const Calculator: React.FC = () => {
                 return link;
             });
         });
-    }, [exploration])
+    }, [exploration, DFS_Start, BFS_Start])
 
 
     // Node moving ===============================================
@@ -275,7 +287,7 @@ const Calculator: React.FC = () => {
         <>
             <ToolHeader graphType={handleGraphType} />
             <div className="flex bottom-0 w-full h-screen">
-                {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} Exploration={GetExploration} MST={rs_MST} HAMITON={rs_Hamiton} DFS_Start={DFS_Start} BFS_Start={BFS_Start} />}
+                {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} Exploration={GetExploration} MST={rs_MST} HAMITON={rs_Hamiton} DFS_Start={DFS_Start} BFS_Start={BFS_Start} SetNodeStart={getNodeStart} />}
                 <div className="flex items-center justify-center w-full border border-black bg-color-custom">
                     <svg ref={svgRef} className="w-[95%] h-5/6 bg-gray-200 shadow-sm shadow-black"
 
@@ -313,7 +325,7 @@ const Calculator: React.FC = () => {
                         )}
                         {/* Nodes */}
                         {nodes.map((node, index) => (
-                            <g key={`node-${index}`}
+                            <g key={`node-${index}`} className="cursor-grabbing"
                                 onMouseDown={() => {
                                     HandleMouseDown(node.id)
                                 }}>
@@ -325,7 +337,6 @@ const Calculator: React.FC = () => {
                                     fill={node.flag ? "red" : "white"}
                                     stroke={node.flag ? "black" : "lightgray"}
                                     strokeWidth={Math.floor(nodeRadious / 4)}
-
                                 />
                                 <text
                                     x={node.x}

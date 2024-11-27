@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 // components
 import Information from "./Information";
@@ -14,16 +14,19 @@ interface ComponentInputProps {
     Exploration: (algorithm: string) => void,
     MST: number,
     HAMITON: boolean,
+    SetNodeStart: (nodeStart: string) => void,
     DFS_Start?: string,
     BFS_Start?: string
 }
 
-const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, className, dataHandler, ReDraw, NumberOfNode, Exploration, MST, HAMITON, DFS_Start, BFS_Start }) {
+const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, className, dataHandler, ReDraw, NumberOfNode, Exploration, MST, HAMITON, SetNodeStart, DFS_Start, BFS_Start }) {
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
     const [isDrawed, setIsDrawed] = useState(false)
-    const [data, setData] = useState("1 3\n1 5\n1 7\n2 4\n2 5\n2 6\n3 4\n3 5 \n3 7\n4 6\n4 7\n5 7\n6 7")
+    const [data, setData] = useState("1 3 8\n1 5 \n1 7 3\n2 4 4\n2 5 9\n2 6\n3 4\n3 5 10\n3 7 1\n4 6\n4 7 2\n5 7 7\n6 7")
     const [numberOfNode, setNumberOfNodes] = useState("7")
+    const [numberofNode_submited, setNumberofNode_submited] = useState<number>(7)
     const [exploration, setExploration] = useState<string>("")
+    const [nodeSelect, setNodeSeclect] = useState<string | null>(null)
 
     // effects 
     const addrippleEffect = useRippleEffect()
@@ -39,9 +42,14 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
     const handleRedraw = () => {
         dataHandler(data);
         NumberOfNode(numberOfNode);
+        setNumberofNode_submited(Number(numberOfNode))
         if (isDrawed && data) ReDraw(true);
         if (data) setIsDrawed(true);
     };
+
+    useEffect(() => {
+        if (exploration !== "dfs" && exploration !== "bfs") setNodeSeclect(null)
+    }, [exploration])
 
     return (
         <div className={`${className} stop-0 left-0 w-[15rem] h-screen pr-[0.5rem] shadow-sm shadow-black text-black`}>
@@ -123,11 +131,49 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                                 }
                             }}>{">>"}dfs
                             {exploration === "dfs" && <span className={`text-[0.5rem] text-right transition-none mr-1`}>starting vertex:</span>}</button>
-                        {exploration === "dfs" && <button className={`w-[18%] ml-[0.1rem] rounded-r-lg bg-gray-600 text-white hover:bg-black hover:text-white text-center`}>{DFS_Start}</button>}
+                        {exploration === "dfs" &&
+                            <button className={`w-[19%] ml-[1%] bg-black text-white hover:bg-red-500 hover:text-white text-center`}
+                                onClick={() => {
+                                    if (nodeSelect === null)
+                                        setNodeSeclect("dfs")
+                                    else setNodeSeclect(null)
+                                }}>{DFS_Start}</button>}
                     </div>
                     {exploration === "dfs" && (<Information headerName="depth first search" type="dfs" />)}
+                    <div className="flex w-full">
+                        <button
+                            className={`flex justify-between items-center whitespace-nowrap ${exploration === "bfs" ? "w-[80%] bg-black text-white" : "w-full hover:text-[#003161] hover:underline"}`}
+                            onClick={() => {
+                                if (exploration === "bfs") {
+                                    setExploration("none");
+                                    Exploration("none")
+                                } else {
+                                    setExploration("bfs");
+                                    Exploration("bfs")
+                                }
+                            }}>{">>"}bfs
+                            {exploration === "bfs" && <span className={`text-[0.5rem] text-right transition-none mr-1`}>starting vertex:</span>}</button>
+                        {exploration === "bfs" &&
+                            <button className={`w-[19%] ml-[1%] bg-black text-white hover:bg-red-500 hover:text-white text-center`}
+                                onClick={() => {
+                                    if (nodeSelect === null)
+                                        setNodeSeclect("bfs")
+                                    else setNodeSeclect(null)
+                                }}>{BFS_Start}</button>}
+                    </div>
+                    {exploration === "bfs" && (<Information headerName="breadth first search" type="bfs" />)}
                 </div>}
             </div>
+            {(nodeSelect !== null) && (exploration === "dfs" || exploration === "bfs")
+                && <div className={`fixed flex flex-col overflow-auto overflow-x-hidden justify-between py-[0.4rem] left-[13.5rem] h-[35%] border border-l-black w-[2.2rem] transform -translate-x-1/2 -translate-y-1/2 rounded-r-md bg-white shadow-sm  shadow-black`}>
+                    {Array.from({ length: numberofNode_submited }, (_, i) => (
+                        <div key={`${i + 1}`} className={`h-[1.5rem] w-full text-[1rem] pl-[0.3rem] hover:bg-black hover:text-white flex items-center ${(i + 1) === Number(exploration == "dfs" ? DFS_Start : BFS_Start) ? "bg-gray-300" : "bg-white cursor-pointer"}`}
+                            onClick={() => {
+                                SetNodeStart(String(i + 1));
+                                setNodeSeclect(null)
+                            }}>{i + 1}</div>
+                    ))}
+                </div>}
         </div >
     )
 }

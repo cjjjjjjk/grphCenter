@@ -9,7 +9,8 @@ interface Information_FC {
 const graph_information_map = new Map<string | undefined, { des: string, link: string }>([
     ['mst', { des: "MST is a subgraph connecting all vertices in a weighted graph with the minimum total edge weight and no cycles.", link: "https://en.wikipedia.org/wiki/Minimum_spanning_tree" }],
     ['hamilton', { des: "Hamiltonian cycle in a graph is a closed loop that visits each vertex exactly once, returning to the starting vertex, without repeating edges or vertices.", link: "https://en.wikipedia.org/wiki/Hamiltonian_path" }],
-    ['dfs', { des: "DFS explores a network graph by traversing as far as possible along each branch before backtracking, using a stack-like structure for vertex exploration.", link: "https://en.wikipedia.org/wiki/Depth-first_search" }]
+    ['dfs', { des: "DFS explores a network graph by traversing as far as possible along each branch before backtracking, using a stack-like structure for vertex exploration.", link: "https://en.wikipedia.org/wiki/Depth-first_search" }],
+    ['bfs', { des: "BFS is an algorithm for searching a tree data structure for a node that satisfies a given property. It starts at the tree root and explores all nodes at the present depth prior to moving on to the nodes at the next depth level. ", link: "https://en.wikipedia.org/wiki/Breadth-first_search" }]
 ])
 
 const Information: React.FC<Information_FC> = function ({ headerName, type }) {
