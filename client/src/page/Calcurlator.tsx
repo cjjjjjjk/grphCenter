@@ -201,13 +201,86 @@ const Calculator: React.FC = () => {
         });
     }, [exploration])
 
+
+    // Node moving ===============================================
+    // mouse handle ----------------------------------------------
+    const [nodeDrag, setNodeDrag] = useState<string | null>(null)
+    const HandleMouseDown = function (nodeId: string) { setNodeDrag(nodeId) }
+    const HandleMouseMove = function (e: React.MouseEvent<SVGSVGElement>) {
+        if (nodeDrag) {
+            const { clientX, clientY } = e;
+            const rect = e.currentTarget.getBoundingClientRect()
+            setNodes((prevNodes) =>
+                prevNodes.map((crrNode) =>
+                    crrNode.id === nodeDrag ?
+                        { ...crrNode, x: Math.floor(clientX - rect.left), y: Math.floor(clientY - rect.top) } : crrNode
+                )
+            )
+        } else return;
+    }
+    const HandleMouseUp = function () { setNodeDrag(null) }
+    useEffect(() => {
+        const handleGlobalMouseUp = () => {
+            if (nodeDrag !== null) {
+                setNodeDrag(null);
+            }
+        };
+        document.addEventListener("mouseup", handleGlobalMouseUp);
+        return () => {
+            document.removeEventListener("mouseup", handleGlobalMouseUp);
+        };
+    }, [nodeDrag]);
+    // Update links, basenode, baselinks when change a node Position ----
+    useEffect(() => {
+        const changedNode: CustomNode | undefined = nodes.find((fNode) => fNode.id === nodeDrag)
+        setLinks((prevLinks) => prevLinks.map((curr_link) => {
+            if (!changedNode) return curr_link;
+            if (curr_link.source.id == nodeDrag) {
+                let rs_link = curr_link;
+                rs_link.source = changedNode
+                return rs_link
+            }
+            else if (curr_link.target.id === nodeDrag) {
+                let rs_link = curr_link;
+                rs_link.target = changedNode
+                return rs_link
+            }
+            else return curr_link;
+        }))
+        setBaseLinks((preBase_link) => preBase_link.map((curr_link) => {
+            let rs_link = curr_link;
+            rs_link.flag = false;
+            if (changedNode === undefined) return curr_link;
+            if (curr_link.source.id == nodeDrag) {
+                rs_link.source = changedNode
+                return rs_link
+            }
+            else if (curr_link.target.id === nodeDrag) {
+                rs_link.target = changedNode
+                return rs_link
+            }
+            else return curr_link
+        })
+        )
+        setBaseNodes((prevNode) => prevNode.map((pNode) => {
+            if (changedNode === undefined) return pNode
+            let rs_node = { ...pNode }
+            if (rs_node.id === nodeDrag) { rs_node = { ...changedNode } }
+            rs_node.flag = false;
+            return rs_node
+        }))
+    }, [nodes])
+
     return (
         <>
             <ToolHeader graphType={handleGraphType} />
             <div className="flex bottom-0 w-full h-screen">
                 {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} Exploration={GetExploration} MST={rs_MST} HAMITON={rs_Hamiton} DFS_Start={DFS_Start} BFS_Start={BFS_Start} />}
                 <div className="flex items-center justify-center w-full border border-black bg-color-custom">
-                    <svg ref={svgRef} className="w-[95%] h-5/6 bg-gray-200 shadow-sm shadow-black">
+                    <svg ref={svgRef} className="w-[95%] h-5/6 bg-gray-200 shadow-sm shadow-black"
+
+                        onMouseUp={HandleMouseUp}
+                        onMouseMove={HandleMouseMove}>
                         {/* Links */}
                         {links.map((link, index) => {
                             const midX = (link.source.x + link.target.x) / 2
@@ -230,6 +303,8 @@ const Calculator: React.FC = () => {
                                     fontWeight={link.flag ? "bold" : "1"}
                                     textAnchor="middle"
                                     alignmentBaseline="middle"
+                                    style={{ userSelect: "none" }}
+
                                 >
                                     {link.weight || ""}
                                 </text>
@@ -238,7 +313,11 @@ const Calculator: React.FC = () => {
                         )}
                         {/* Nodes */}
                         {nodes.map((node, index) => (
-                            <g key={`node-${index}`}>
+                            <g key={`node-${index}`}
+                                onMouseDown={() => {
+                                    HandleMouseDown(node.id)
+                                }}>
+
                                 <circle className="transition-colors duration-1000"
                                     cx={node.x}
                                     cy={node.y}
@@ -246,6 +325,7 @@ const Calculator: React.FC = () => {
                                     fill={node.flag ? "red" : "white"}
                                     stroke={node.flag ? "black" : "lightgray"}
                                     strokeWidth={Math.floor(nodeRadious / 4)}
+
                                 />
                                 <text
                                     x={node.x}
@@ -255,6 +335,8 @@ const Calculator: React.FC = () => {
                                     fontSize={nodeRadious}
                                     fontWeight='bold'
                                     fill={node.flag ? "white" : "black"}
+                                    style={{ userSelect: "none" }}
+
                                 >
                                     {node.id}
                                 </text>
