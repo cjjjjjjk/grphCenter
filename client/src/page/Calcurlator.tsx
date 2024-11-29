@@ -13,6 +13,7 @@ import { CustomLink } from "../entity/link";
 import { KruskalReturnNewNodesandLinks } from "../algothrism/kruskal";
 import { HamiltonReturnNewGraph } from "../algothrism/hamiton";
 import DFSReturnNewGraph from "../algothrism/dfs";
+import { BfsReturnnewGraph } from "../algothrism/bfs";
 // ------------------------------------------------------------
 // Main component =============================================
 const Calculator: React.FC = () => {
@@ -187,6 +188,9 @@ const Calculator: React.FC = () => {
         }
         else if (exploration == "dfs") {
             ResultGraph = DFSReturnNewGraph({ nodes: base_nodes, links: base_links, startNode: DFS_Start })
+        }
+        else if (exploration == "bfs") {
+            ResultGraph = BfsReturnnewGraph({ nodes: base_nodes, links: base_links }, BFS_Start)
         }
         else if (exploration == "") {
             return;
