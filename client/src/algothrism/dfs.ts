@@ -12,7 +12,7 @@ const dfs = function (currentNode: string, neighborNodes: Map<string, string[]>,
     })
     return;
 }
-const DFSReturnNewGraph = function ({ nodes: base_Nodes, links: base_Links, startNode: startNode }: { nodes: CustomNode[], links: CustomLink[], startNode: string }): { nodes: CustomNode[], links: CustomLink[] } {
+const DFSReturnNewGraph = function ({ nodes: base_Nodes, links: base_Links, startNode: startNode }: { nodes: CustomNode[], links: CustomLink[], startNode: string }): { nodes: CustomNode[], links: CustomLink[], path: string[] } {
     let rs_nodes: CustomNode[] = base_Nodes.map((node) => ({ ...node }));
     let rs_links: CustomLink[] = base_Links.map((link) => ({ ...link }));
 
@@ -49,7 +49,7 @@ const DFSReturnNewGraph = function ({ nodes: base_Nodes, links: base_Links, star
     })
 
     console.log("DFS Path: ", path)
-    return { nodes: rs_nodes, links: rs_links }
+    return { nodes: rs_nodes, links: rs_links, path }
 }
 
 export default DFSReturnNewGraph

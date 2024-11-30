@@ -36,7 +36,9 @@ const Calculator: React.FC = () => {
     const [rs_Hamiton, seRs_Hamiton] = useState<boolean>(false)
 
     const [DFS_Start, setDFS_Start] = useState("")
+    const [DFS_Path, setDFSPath] = useState<string[]>([])
     const [BFS_Start, setBFS_Start] = useState("")
+    const [BFS_Path, setBFSPath] = useState<string[]>([])
     // get data from components-------------------------------
     // graph type : string ----------------
     const handleGraphType = function (graphType: string) {
@@ -177,7 +179,7 @@ const Calculator: React.FC = () => {
 
     // Update Graph with algthrism ----------------------
     useEffect(() => {
-        var ResultGraph: { nodes: CustomNode[], links: CustomLink[], MST?: number, hamiton?: boolean } = { nodes: base_nodes, links: base_links };
+        var ResultGraph: { nodes: CustomNode[], links: CustomLink[], MST?: number, hamiton?: boolean, path?: string[] } = { nodes: base_nodes, links: base_links };
         if (exploration == "mst") {
             ResultGraph = KruskalReturnNewNodesandLinks(base_nodes, base_links)
             setRs_MST(ResultGraph.MST ? ResultGraph.MST : NaN)
@@ -188,9 +190,11 @@ const Calculator: React.FC = () => {
         }
         else if (exploration == "dfs") {
             ResultGraph = DFSReturnNewGraph({ nodes: base_nodes, links: base_links, startNode: DFS_Start })
+            setDFSPath(ResultGraph.path ? ResultGraph.path : [])
         }
         else if (exploration == "bfs") {
             ResultGraph = BfsReturnnewGraph({ nodes: base_nodes, links: base_links }, BFS_Start)
+            setBFSPath(ResultGraph.path ? ResultGraph.path : [])
         }
         else if (exploration == "") {
             return;
@@ -291,7 +295,7 @@ const Calculator: React.FC = () => {
         <>
             <ToolHeader graphType={handleGraphType} />
             <div className="flex bottom-0 w-full h-screen">
-                {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} Exploration={GetExploration} MST={rs_MST} HAMITON={rs_Hamiton} DFS_Start={DFS_Start} BFS_Start={BFS_Start} SetNodeStart={getNodeStart} />}
+                {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} Exploration={GetExploration} MST={rs_MST} HAMITON={rs_Hamiton} DFS_Start={DFS_Start} DFS_Path={DFS_Path} BFS_Start={BFS_Start} BFS_Path={BFS_Path} SetNodeStart={getNodeStart} />}
                 <div className="flex items-center justify-center w-full border border-black bg-color-custom">
                     <svg ref={svgRef} className="w-[95%] h-5/6 bg-gray-200 shadow-sm shadow-black"
 

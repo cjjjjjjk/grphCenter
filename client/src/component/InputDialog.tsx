@@ -5,6 +5,7 @@ import Information from "./Information";
 
 // effects
 import { useRippleEffect } from "../effect/ripple";
+import { path } from "d3";
 interface ComponentInputProps {
     graphType: string,
     className: string,
@@ -16,10 +17,12 @@ interface ComponentInputProps {
     HAMITON: boolean,
     SetNodeStart: (nodeStart: string) => void,
     DFS_Start?: string,
-    BFS_Start?: string
+    DFS_Path?: string[],
+    BFS_Start?: string,
+    BFS_Path?: string[],
 }
 
-const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, className, dataHandler, ReDraw, NumberOfNode, Exploration, MST, HAMITON, SetNodeStart, DFS_Start, BFS_Start }) {
+const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, className, dataHandler, ReDraw, NumberOfNode, Exploration, MST, HAMITON, SetNodeStart, DFS_Start, DFS_Path, BFS_Start, BFS_Path }) {
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
     const [isDrawed, setIsDrawed] = useState(false)
     const [data, setData] = useState("1 3 8\n1 5 \n1 7 3\n2 4 4\n2 5 9\n2 6\n3 4\n3 5 10\n3 7 1\n4 6\n4 7 2\n5 7 7\n6 7")
@@ -52,7 +55,7 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
     }, [exploration])
 
     return (
-        <div className={`${className} stop-0 left-0 w-[15rem] h-screen pr-[0.5rem] shadow-sm shadow-black text-black`}>
+        <div className={`${className} stop-0 left-0 max-w-[13rem] h-screen pr-[0.5rem] shadow-sm shadow-black text-black`}>
             <div className="pt-[2.5rem] pl-[0.75rem] overflow-hidden">
                 <h3 className="mt-[0.5rem] text-[0.75rem]">import: {graphType} graph</h3>
                 <hr className="mb-4" />
@@ -132,14 +135,25 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                             }}>{">>"}dfs
                             {exploration === "dfs" && <span className={`text-[0.5rem] text-right transition-none mr-1`}>starting vertex:</span>}</button>
                         {exploration === "dfs" &&
-                            <button className={`w-[19%] ml-[1%] bg-black text-white hover:bg-red-500 hover:text-white text-center`}
+                            <button className={`w-[19%] ml-[1%] bg-blue-800 rounded-sm text-white hover:bg-red-500 hover:text-white text-center`}
                                 onClick={() => {
                                     if (nodeSelect === null)
                                         setNodeSeclect("dfs")
                                     else setNodeSeclect(null)
                                 }}>{DFS_Start}</button>}
                     </div>
-                    {exploration === "dfs" && (<Information headerName="depth first search" type="dfs" />)}
+                    {exploration === "dfs" && (
+                        <div className="flex flex-col w-full">
+                            <Information headerName="depth first search" type="dfs" />
+                            <div className="w-full max-w-full overflow-x-auto flex flex-row items-center justify-between px-[2%] bg-gray-200 py-[0.1rem] border-y-2 border-black">
+                                {DFS_Path?.map((node) => {
+                                    return (
+                                        <span className="bg-blue-800 px-1 ml-[0.25rem] rounded-sm text-white">{`${node}`}</span>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    )}
                     <div className="flex w-full">
                         <button
                             className={`flex justify-between items-center whitespace-nowrap ${exploration === "bfs" ? "w-[80%] bg-black text-white" : "w-full hover:text-[#003161] hover:underline"}`}
@@ -154,14 +168,26 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                             }}>{">>"}bfs
                             {exploration === "bfs" && <span className={`text-[0.5rem] text-right transition-none mr-1`}>starting vertex:</span>}</button>
                         {exploration === "bfs" &&
-                            <button className={`w-[19%] ml-[1%] bg-black text-white hover:bg-red-500 hover:text-white text-center`}
+                            <button className={`w-[19%] ml-[1%] bg-blue-800 rounded-sm text-white hover:bg-red-500 hover:text-white text-center`}
                                 onClick={() => {
                                     if (nodeSelect === null)
                                         setNodeSeclect("bfs")
                                     else setNodeSeclect(null)
                                 }}>{BFS_Start}</button>}
                     </div>
-                    {exploration === "bfs" && (<Information headerName="breadth first search" type="bfs" />)}
+                    {exploration === "bfs" && (
+                        <div className="flex flex-col w-full">
+                            <Information headerName="breadth first search" type="bfs" />
+                            <div className="w-full max-w-full overflow-x-auto flex flex-row items-center justify-between px-[2%] bg-gray-200 py-[0.1rem] border-y-2 border-black">
+                                {BFS_Path?.map((node) => {
+                                    return (
+                                        <span className="bg-blue-800 px-1 ml-[0.25rem] rounded-sm text-white">{`${node}`}</span>
+                                    );
+                                })}
+                            </div>
+
+                        </div>
+                    )}
                 </div>}
             </div>
             {(nodeSelect !== null) && (exploration === "dfs" || exploration === "bfs")

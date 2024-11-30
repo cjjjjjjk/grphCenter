@@ -29,7 +29,7 @@ const BFS = function (currentNode: string, path: string[], neighborNodes: Map<st
     return;
 }
 
-export const BfsReturnnewGraph = function ({ nodes: base_Nodes, links: base_Links }: { nodes: CustomNode[], links: CustomLink[] }, startNode: string): { nodes: CustomNode[], links: CustomLink[] } {
+export const BfsReturnnewGraph = function ({ nodes: base_Nodes, links: base_Links }: { nodes: CustomNode[], links: CustomLink[] }, startNode: string): { nodes: CustomNode[], links: CustomLink[], path: string[] } {
     const rs_nodes: CustomNode[] = base_Nodes.map((cNode) => ({ ...cNode }))
     const rs_links: CustomLink[] = base_Links.map((cLink) => ({ ...cLink }))
 
@@ -61,5 +61,5 @@ export const BfsReturnnewGraph = function ({ nodes: base_Nodes, links: base_Link
                 link.flag = true;
         });
     })
-    return { nodes: rs_nodes, links: rs_links };
+    return { nodes: rs_nodes, links: rs_links, path };
 }
