@@ -12,7 +12,7 @@ const App: React.FC = () => {
 
   return (
     <BrowserRouter >
-      <div className='App-font'>
+      <div className='relative App-font'>
         <MainHeader />
         <main>
           <Routes>

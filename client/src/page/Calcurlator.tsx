@@ -14,6 +14,7 @@ import { KruskalReturnNewNodesandLinks } from "../algothrism/kruskal";
 import { HamiltonReturnNewGraph } from "../algothrism/hamiton";
 import DFSReturnNewGraph from "../algothrism/dfs";
 import { BfsReturnnewGraph } from "../algothrism/bfs";
+import Menu from "../component/Menu";
 // ------------------------------------------------------------
 // Main component =============================================
 const Calculator: React.FC = () => {
@@ -26,6 +27,7 @@ const Calculator: React.FC = () => {
     const [nodes, setNodes] = useState<CustomNode[]>([]);
     const [links, setLinks] = useState<CustomLink[]>([]);
     const [graphType, setGraphType] = useState<string>("")
+    const [isSHowMenu, setShowMenu] = useState<boolean>(false)
     const [data, setData] = useState<string>("")
     const [numberofNodes, setNumberOfNodes] = useState<number>(NaN)
     const [nodeRadious, setNodeRadious] = useState<number>(15)
@@ -43,6 +45,10 @@ const Calculator: React.FC = () => {
     // graph type : string ----------------
     const handleGraphType = function (graphType: string) {
         setGraphType(graphType)
+    }
+    // show menu
+    const handleShowMenu = function (showMenu: boolean) {
+        setShowMenu(showMenu)
     }
     // get graph exploration : hamiton, mst, dfs, bfs, ...
     const GetExploration = function (exploration_input: string) {
@@ -293,7 +299,12 @@ const Calculator: React.FC = () => {
 
     return (
         <>
-            <ToolHeader graphType={handleGraphType} />
+            <div className="absolute z-50">
+                <ToolHeader graphType={handleGraphType} showMenu={handleShowMenu} />
+            </div>
+            <div className="absolute z-30">
+                {isSHowMenu && <Menu />}
+            </div>
             <div className="flex bottom-0 w-full h-screen">
                 {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} Exploration={GetExploration} MST={rs_MST} HAMITON={rs_Hamiton} DFS_Start={DFS_Start} DFS_Path={DFS_Path} BFS_Start={BFS_Start} BFS_Path={BFS_Path} SetNodeStart={getNodeStart} />}
                 <div className="flex items-center justify-center w-full border border-black bg-color-custom">

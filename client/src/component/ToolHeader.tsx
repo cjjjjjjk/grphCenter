@@ -5,28 +5,40 @@ import { NavLink } from "react-router-dom";
 import { useRippleEffect } from "../effect/ripple";
 // -------------------------------
 interface ToolHeaderProps {
-    graphType: (value: string) => void
+    graphType: (value: string) => void,
+    showMenu: (value: boolean) => void,
 }
 
 
 // Main component =====================================================
 // header tool : import, export graphs handle -------------------------
-const ToolHeader: React.FC<ToolHeaderProps> = function ({ graphType }) {
+const ToolHeader: React.FC<ToolHeaderProps> = function ({ graphType, showMenu }) {
     // design effects ----------
     const addrippleEffect = useRippleEffect()
     // states
     const [showGraphSelection, setShowGraphSelection] = useState(false)
+    const [isSHowMenu, setShowMenu] = useState<boolean>(false)
 
     // handlers
     const hanldleGraphSelection = function () {
         setShowGraphSelection(!showGraphSelection)
+    }
+    const handleShowMenu = function () {
+        setShowMenu(!isSHowMenu)
+        if (showGraphSelection) hanldleGraphSelection()
+        showMenu(!isSHowMenu)
     }
 
     return (
         <header className="fixed top-0 z-50 h-[2.5rem] w-full bg-white pl-[0.75rem] pr-[1rem] App-font text-[1rem] border-b shadow-sm shadow-black ">
             <div className="w-full h-full flex ">
                 <div className="flex items-center">
-                    <button className="fonr-bold mr-2 text-black text-[1.5rem]">≡</button>
+                    <button className="relative overflow-hidden mr-2 text-black text-[1.5rem]"
+                        onClick={(e) => {
+                            addrippleEffect(e)
+                            handleShowMenu()
+                        }
+                        }>≡</button>
                     <button className="font-bold mr-4 text-black text-[1rem] font-sans relative overflow-hidden"
                         onClick={(e) => { addrippleEffect(e) }}>gr<u>ph<a className="text-[1rem] text-red-700">₵</a>enter</u></button>
 
@@ -34,6 +46,7 @@ const ToolHeader: React.FC<ToolHeaderProps> = function ({ graphType }) {
                         <button className={`flex h-3/5 w-[6.5rem] items-center border border-black rounded-full pl-[0.5rem] hover:text-white hover:font-bold hover:bg-black relative overflow-hidden ${showGraphSelection ? 'bg-black text-white' : 'bg-white text-black'} transition-colors duration-500`}
                             onClick={(e) => {
                                 hanldleGraphSelection();
+                                if (isSHowMenu) handleShowMenu()
                                 addrippleEffect(e)
                             }}>
                             <span className="z-100 text-[0.75rem]">🥠 import</span>

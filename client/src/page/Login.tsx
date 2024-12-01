@@ -24,7 +24,7 @@ const Login: React.FC = function () {
                 <hr />
                 <div id="username-box" className="flex flex-col px-[1rem] text-[0.75rem]">
                     <label htmlFor="" className="pl-[0.25rem] font-bold ">• username</label>
-                    <input type="text" className="h-[2rem] rounded-r-lg bg-[#FBFBFB] shadow-sm shadow-gray-300 px-[0.25rem] focus:outline-none focus:bg-[#FFFBF5] focus:border-l-[3px] border-[#003161] text-[0.75rem] transition-colors duration-400" placeholder="enter your username"
+                    <input autoFocus type="text" className="h-[2rem] rounded-r-lg bg-[#FBFBFB] shadow-sm shadow-gray-300 px-[0.25rem] focus:outline-none focus:bg-[#FFFBF5] focus:border-l-[3px] border-[#003161] text-[0.75rem] transition-colors duration-400" placeholder="enter your username"
                         onChange={(e) => { setUserName(e.target.value) }}></input>
                     <span id="username-warning" className="text-red-500 h-[1rem] pl-[0.25rem]">{(usernameWarning !== "") ? `• ${usernameWarning}!` : ""}</span>
                 </div>
@@ -36,7 +36,7 @@ const Login: React.FC = function () {
                 <hr />
                 <div className="absolute w-full bottom-[1rem]">
                     <div className="w-full flex justify-center">
-                        <button className="w-[40%] h-[2rem] shadow-sm shadow-gray-300 rounded-full hover:text-[#355F2E] hover:bg-green-100 transition-colors duration-300">go!</button>
+                        <button className="w-[40%] h-[2rem] shadow-sm shadow-gray-300 rounded-full hover:text-[#355F2E] bg-blue-200 hover:bg-green-200 transition-colors duration-300">go!</button>
                     </div>
                     <div className="w-full flex justify-center">
                         <span className="text-[0.5rem] pt-[0.2rem]">new to graphCenter?<a className="font-bold text-blue-300 hover:underline hover:text-blue-800 hover:cursor-pointer">create</a></span>
