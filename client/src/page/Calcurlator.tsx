@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
 
 // components
 import ToolHeader from "../component/ToolHeader";
@@ -15,6 +17,7 @@ import { HamiltonReturnNewGraph } from "../algothrism/hamiton";
 import DFSReturnNewGraph from "../algothrism/dfs";
 import { BfsReturnnewGraph } from "../algothrism/bfs";
 import Menu from "../component/Menu";
+import { contours } from "d3";
 // ------------------------------------------------------------
 // Main component =============================================
 const Calculator: React.FC = () => {
@@ -297,82 +300,113 @@ const Calculator: React.FC = () => {
         }))
     }, [nodes])
 
+
+    // Export to pdf ==========================================================
+    const exportREf = useRef<HTMLDivElement | null>(null)
+
+    const ExportGraphtoPDF = async function () {
+        const exportElement = exportREf.current
+        if (!exportElement) {
+            console.log("Export false ! element not found")
+            return;
+        };
+
+        try {
+            const canvas = await html2canvas(exportElement)
+            const imgData = canvas.toDataURL("image/png")
+
+            const pdf = new jsPDF();
+            const imgWidth = 100;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            pdf.setFontSize(12)
+
+            pdf.text(`${graphType} graph \nnumber of node: ${numberofNodes}`, 10, 10)
+            pdf.text(`edges: \n` + data, 10, 20)
+            pdf.addImage(imgData, "PNG", 10, data.split("\n").length * 8, imgWidth, imgHeight);
+            pdf.save("exported-graph.pdf");
+        } catch (err) {
+            console.log(err)
+        }
+    }
+    // ========================================================================
     return (
         <>
             <div className="absolute z-50">
                 <ToolHeader graphType={handleGraphType} showMenu={handleShowMenu} />
             </div>
             <div className="absolute z-30">
-                {isSHowMenu && <Menu />}
+                {isSHowMenu && <Menu exportPdf={ExportGraphtoPDF} />}
             </div>
             <div className="flex bottom-0 w-full h-screen">
                 {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} Exploration={GetExploration} MST={rs_MST} HAMITON={rs_Hamiton} DFS_Start={DFS_Start} DFS_Path={DFS_Path} BFS_Start={BFS_Start} BFS_Path={BFS_Path} SetNodeStart={getNodeStart} />}
                 <div className="flex items-center justify-center w-full border border-black bg-color-custom">
-                    <svg ref={svgRef} className="w-[95%] h-5/6 bg-gray-200 shadow-sm shadow-black"
+                    <div className="w-[95%] h-5/6 bg-white   shadow-sm shadow-black" ref={exportREf}>
+                        <svg ref={svgRef} className="w-full h-full"
 
-                        onMouseUp={HandleMouseUp}
-                        onMouseMove={HandleMouseMove}>
-                        {/* Links */}
-                        {links.map((link, index) => {
-                            const midX = (link.source.x + link.target.x) / 2
-                            const midY = (link.source.y + link.target.y) / 2
-                            return (<g key={`link-${index} `} >
-                                <line className="transition-colors duration-1000"
-                                    x1={link.source.x}
-                                    y1={link.source.y}
-                                    x2={link.target.x}
-                                    y2={link.target.y}
-                                    strokeWidth={link.flag ? nodeRadious / 6 : 1}
-                                    stroke={link.flag ? "black" : "#A6AEBF"}
-                                    strokeOpacity={1}
-                                />
-                                <text
-                                    x={midX}
-                                    y={midY}
-                                    fill={link.flag ? "red" : "#A6AEBF"}
-                                    fontSize={nodeRadious}
-                                    fontWeight={link.flag ? "bold" : "1"}
-                                    textAnchor="middle"
-                                    alignmentBaseline="middle"
-                                    style={{ userSelect: "none" }}
+                            onMouseUp={HandleMouseUp}
+                            onMouseMove={HandleMouseMove}>
+                            {/* Links */}
+                            {links.map((link, index) => {
+                                const midX = (link.source.x + link.target.x) / 2
+                                const midY = (link.source.y + link.target.y) / 2
+                                return (<g key={`link-${index} `} >
+                                    <line className="transition-colors duration-1000"
+                                        x1={link.source.x}
+                                        y1={link.source.y}
+                                        x2={link.target.x}
+                                        y2={link.target.y}
+                                        strokeWidth={link.flag ? nodeRadious / 6 : 1}
+                                        stroke={link.flag ? "black" : "#A6AEBF"}
+                                        strokeOpacity={1}
+                                    />
+                                    <text
+                                        x={midX}
+                                        y={midY}
+                                        fill={link.flag ? "red" : "#A6AEBF"}
+                                        fontSize={nodeRadious}
+                                        fontWeight={link.flag ? "bold" : "1"}
+                                        textAnchor="middle"
+                                        alignmentBaseline="middle"
+                                        style={{ userSelect: "none" }}
 
-                                >
-                                    {link.weight || ""}
-                                </text>
-                            </g>)
-                        }
-                        )}
-                        {/* Nodes */}
-                        {nodes.map((node, index) => (
-                            <g key={`node-${index}`} className="cursor-grabbing"
-                                onMouseDown={() => {
-                                    HandleMouseDown(node.id)
-                                }}>
+                                    >
+                                        {link.weight || ""}
+                                    </text>
+                                </g>)
+                            }
+                            )}
+                            {/* Nodes */}
+                            {nodes.map((node, index) => (
+                                <g key={`node-${index}`} className="cursor-grabbing"
+                                    onMouseDown={() => {
+                                        HandleMouseDown(node.id)
+                                    }}>
 
-                                <circle className="transition-colors duration-1000"
-                                    cx={node.x}
-                                    cy={node.y}
-                                    r={nodeRadious}
-                                    fill={node.flag ? "red" : "white"}
-                                    stroke={node.flag ? "black" : "lightgray"}
-                                    strokeWidth={Math.floor(nodeRadious / 4)}
-                                />
-                                <text
-                                    x={node.x}
-                                    y={node.y}
-                                    textAnchor="middle"
-                                    dominantBaseline="middle"
-                                    fontSize={nodeRadious}
-                                    fontWeight='bold'
-                                    fill={node.flag ? "white" : "black"}
-                                    style={{ userSelect: "none" }}
+                                    <circle className="transition-colors duration-1000"
+                                        cx={node.x}
+                                        cy={node.y}
+                                        r={nodeRadious}
+                                        fill={node.flag ? "red" : "white"}
+                                        stroke={node.flag ? "black" : "lightgray"}
+                                        strokeWidth={Math.floor(nodeRadious / 4)}
+                                    />
+                                    <text
+                                        x={node.x}
+                                        y={node.y}
+                                        textAnchor="middle"
+                                        dominantBaseline="middle"
+                                        fontSize={nodeRadious}
+                                        fontWeight='bold'
+                                        fill={node.flag ? "white" : "black"}
+                                        style={{ userSelect: "none" }}
 
-                                >
-                                    {node.id}
-                                </text>
-                            </g>
-                        ))}
-                    </svg>
+                                    >
+                                        {node.id}
+                                    </text>
+                                </g>
+                            ))}
+                        </svg>
+                    </div>
                 </div>
             </div >
         </>
