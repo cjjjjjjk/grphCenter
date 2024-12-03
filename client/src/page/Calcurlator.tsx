@@ -316,13 +316,17 @@ const Calculator: React.FC = () => {
             const imgData = canvas.toDataURL("image/png")
 
             const pdf = new jsPDF();
-            const imgWidth = 100;
+            const imgWidth = 140;
             const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            pdf.setFont("courier", "normal", 400)
+            pdf.setTextColor("#181C14")
             pdf.setFontSize(12)
 
-            pdf.text(`${graphType} graph \nnumber of node: ${numberofNodes}`, 10, 10)
-            pdf.text(`edges: \n` + data, 10, 20)
-            pdf.addImage(imgData, "PNG", 10, data.split("\n").length * 8, imgWidth, imgHeight);
+
+            pdf.text("--------------------------------------------------------------- graphCenter", 10, 8)
+            pdf.text(`${graphType} graph \nnumber of node: ${numberofNodes}`, 10, 15)
+            pdf.text(`edges: \n` + data, 10, 25)
+            pdf.addImage(imgData, "PNG", 60, 15, imgWidth, imgHeight);
             pdf.save("exported-graph.pdf");
         } catch (err) {
             console.log(err)
@@ -338,7 +342,8 @@ const Calculator: React.FC = () => {
                 {isSHowMenu && <Menu exportPdf={ExportGraphtoPDF} />}
             </div>
             <div className="flex bottom-0 w-full h-screen">
-                {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} Exploration={GetExploration} MST={rs_MST} HAMITON={rs_Hamiton} DFS_Start={DFS_Start} DFS_Path={DFS_Path} BFS_Start={BFS_Start} BFS_Path={BFS_Path} SetNodeStart={getNodeStart} />}
+                {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} Exploration={GetExploration}
+                    MST={rs_MST} HAMITON={rs_Hamiton} DFS_Start={DFS_Start} DFS_Path={DFS_Path} BFS_Start={BFS_Start} BFS_Path={BFS_Path} SetNodeStart={getNodeStart} />}
                 <div className="flex items-center justify-center w-full border border-black bg-color-custom">
                     <div className="w-[95%] h-5/6 bg-white   shadow-sm shadow-black" ref={exportREf}>
                         <svg ref={svgRef} className="w-full h-full"
