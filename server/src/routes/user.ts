@@ -9,7 +9,6 @@ userRoutes.post("/create", async (req: Request, res: Response) => {
     try {
         const newUser = new Users({ username, password, email })
         await newUser.save()
-
         res.status(201).json({
             success: true,
             message: "User created successfully",

@@ -39,7 +39,7 @@ const Login: React.FC = function () {
                         <button className="w-[40%] h-[2rem] shadow-sm shadow-gray-300 rounded-full hover:text-[#355F2E] bg-blue-200 hover:bg-green-200 transition-colors duration-300">go!</button>
                     </div>
                     <div className="w-full flex justify-center">
-                        <span className="text-[0.5rem] pt-[0.2rem]">new to graphCenter?<a className="font-bold text-blue-300 hover:underline hover:text-blue-800 hover:cursor-pointer">create</a></span>
+                        <span className="text-[0.5rem] pt-[0.2rem]">new to graphCenter?<a href="/register" className="font-bold text-blue-300 hover:underline hover:text-blue-800 hover:cursor-pointer">create</a></span>
                     </div>
                 </div>
             </div>

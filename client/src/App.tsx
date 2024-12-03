@@ -7,6 +7,7 @@ import Calculator from './page/Calcurlator';
 
 import MainHeader from './component/MainHeader';
 import Login from './page/Login';
+import Register from './page/Register';
 
 const App: React.FC = () => {
 
@@ -19,6 +20,7 @@ const App: React.FC = () => {
             <Route path='/' element={<Home />}></Route>
             <Route path="/calcurlator" element={<Calculator />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
           </Routes>
         </main>
       </div>
