@@ -43,13 +43,13 @@ const ToolHeader: React.FC<ToolHeaderProps> = function ({ graphType, showMenu })
                         onClick={(e) => { addrippleEffect(e) }}>gr<u>ph<a className="text-[1rem] text-red-700">₵</a>enter</u></button>
 
                     <div className="relative flex flex-col items-start ">
-                        <button className={`flex h-3/5 w-[6.5rem] items-center border border-black rounded-full pl-[0.5rem] hover:text-white hover:font-bold hover:bg-black relative overflow-hidden ${showGraphSelection ? 'bg-black text-white' : 'bg-white text-black'} transition-colors duration-500`}
+                        <button className={`flex h-3/5 w-[6rem] items-center border border-black rounded-full pl-[0.5rem] hover:text-white hover:font-bold hover:bg-black relative overflow-hidden ${showGraphSelection ? 'bg-black text-white' : 'bg-white text-black'} transition-colors duration-500`}
                             onClick={(e) => {
                                 hanldleGraphSelection();
                                 if (isSHowMenu) handleShowMenu()
                                 addrippleEffect(e)
                             }}>
-                            <span className="z-100 text-[0.75rem]">🥠 import</span>
+                            <span className="z-100 text-[0.75rem]">🥠 type</span>
                             <svg className="fill-current size-6" aria-hidden="true" viewBox="0 0 24 24">
                                 <path d={showGraphSelection ? "M7,15L12,10L17,15H7Z" : "M7,10L12,15L17,10H7Z"}></path>
                             </svg>

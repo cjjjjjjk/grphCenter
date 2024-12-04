@@ -29,7 +29,7 @@ const Calculator: React.FC = () => {
     const [base_links, setBaseLinks] = useState<CustomLink[]>([])
     const [nodes, setNodes] = useState<CustomNode[]>([]);
     const [links, setLinks] = useState<CustomLink[]>([]);
-    const [graphType, setGraphType] = useState<string>("")
+    const [graphType, setGraphType] = useState<string>("undirected")
     const [isSHowMenu, setShowMenu] = useState<boolean>(false)
     const [data, setData] = useState<string>("")
     const [numberofNodes, setNumberOfNodes] = useState<number>(NaN)
