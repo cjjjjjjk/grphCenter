@@ -354,8 +354,9 @@ const Calculator: React.FC = () => {
                             {links.map((link, index) => {
                                 const midX = (link.source.x + link.target.x) / 2
                                 const midY = (link.source.y + link.target.y) / 2
-                                return (<g key={`link-${index} `} >
-                                    <line className="transition-colors duration-1000"
+                                return (<g key={`link-${index}`}>
+                                    <line
+                                        className="transition-colors duration-1000"
                                         x1={link.source.x}
                                         y1={link.source.y}
                                         x2={link.target.x}
@@ -373,11 +374,27 @@ const Calculator: React.FC = () => {
                                         textAnchor="middle"
                                         alignmentBaseline="middle"
                                         style={{ userSelect: "none" }}
-
                                     >
                                         {link.weight || ""}
                                     </text>
-                                </g>)
+                                    {graphType === "directed" && (() => {
+                                        const fraction = 2 / 3;
+                                        const arrowX = link.source.x + fraction * (link.target.x - link.source.x);
+                                        const arrowY = link.source.y + fraction * (link.target.y - link.source.y);
+                                        const angle = Math.atan2(
+                                            link.target.y - link.source.y,
+                                            link.target.x - link.source.x) * (180 / Math.PI);
+                                        const arrowSize = nodeRadious / 3;
+                                        return (
+                                            <polygon
+                                                points={`0,-${arrowSize} ${arrowSize * 2},0 0,${arrowSize}`}
+                                                fill={link.flag ? "black" : "#A6AEBF"}
+                                                transform={`translate(${arrowX}, ${arrowY}) rotate(${angle})`}
+                                            />
+                                        );
+                                    })()}
+                                </g>
+                                )
                             }
                             )}
                             {/* Nodes */}
