@@ -1,6 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, createContext, useContext } from "react";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import { useVirsualBox_context } from "../contexts/VirsualBox_contex";
+
 
 // components
 import ToolHeader from "../component/ToolHeader";
@@ -17,7 +19,7 @@ import { HamiltonReturnNewGraph } from "../algothrism/hamiton";
 import DFSReturnNewGraph from "../algothrism/dfs";
 import { BfsReturnnewGraph } from "../algothrism/bfs";
 import Menu from "../component/Menu";
-import { contours } from "d3";
+import GraphVisualization from "../component/GraphVisualization";
 // ------------------------------------------------------------
 // Main component =============================================
 const Calculator: React.FC = () => {
@@ -333,8 +335,12 @@ const Calculator: React.FC = () => {
         }
     }
     // ========================================================================
+    // Handle Visualization ===================================================
+    const { isOpen } = useVirsualBox_context()
+
     return (
         <>
+            {isOpen && <GraphVisualization />}
             <div className="absolute z-50">
                 <ToolHeader graphType={handleGraphType} showMenu={handleShowMenu} />
             </div>

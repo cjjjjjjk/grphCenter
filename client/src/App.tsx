@@ -9,9 +9,11 @@ import MainHeader from './component/MainHeader';
 import Login from './page/Login';
 import Register from './page/Register';
 
+import { VirsualBox_Provider } from './contexts/VirsualBox_contex';
+
 const App: React.FC = () => {
 
-  return (
+  return (<VirsualBox_Provider>
     <BrowserRouter >
       <div className='relative App-font'>
         <MainHeader />
@@ -25,6 +27,7 @@ const App: React.FC = () => {
         </main>
       </div>
     </BrowserRouter>
+  </VirsualBox_Provider>
   );
 }
 

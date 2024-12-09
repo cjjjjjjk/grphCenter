@@ -5,7 +5,7 @@ import Information from "./Information";
 
 // effects
 import { useRippleEffect } from "../effect/ripple";
-import { path } from "d3";
+import { useVirsualBox_context } from "../contexts/VirsualBox_contex";
 interface ComponentInputProps {
     graphType: string,
     className: string,
@@ -20,9 +20,10 @@ interface ComponentInputProps {
     DFS_Path?: string[],
     BFS_Start?: string,
     BFS_Path?: string[],
+
 }
 
-const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, className, dataHandler, ReDraw, NumberOfNode, Exploration, MST, HAMITON, SetNodeStart, DFS_Start, DFS_Path, BFS_Start, BFS_Path }) {
+const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, className, dataHandler, ReDraw, NumberOfNode, Exploration, MST, HAMITON, SetNodeStart, DFS_Start, DFS_Path, BFS_Start, BFS_Path, }) {
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
     const [isDrawed, setIsDrawed] = useState(false)
     const [data, setData] = useState("1 3 8\n1 5 \n1 7 3\n2 4 4\n2 5 9\n2 6\n3 4\n3 5 10\n3 7 1\n4 6\n4 7 2\n5 7 7\n6 7")
@@ -54,6 +55,8 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
         if (exploration !== "dfs" && exploration !== "bfs") setNodeSeclect(null)
     }, [exploration])
 
+    // VirsualBox context ==============
+    const { HandleOpenBox } = useVirsualBox_context();
     return (
         <div className={`${className} stop-0 left-0 max-w-[13rem] h-screen pr-[0.5rem] shadow-sm shadow-black text-black`}>
             <div className="pt-[2.5rem] pl-[0.75rem] overflow-hidden">
@@ -143,16 +146,20 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                                 }}>{DFS_Start}</button>}
                     </div>
                     {exploration === "dfs" && (
-                        <div className="flex flex-col w-full">
-                            <Information headerName="depth first search" type="dfs" />
-                            <div className="w-full max-w-full overflow-x-auto flex flex-row items-center justify-between px-[2%] bg-gray-200 py-[0.1rem] border-y-2 border-black">
-                                {DFS_Path?.map((node) => {
-                                    return (
-                                        <span className="bg-blue-800 px-1 ml-[0.25rem] rounded-sm text-white">{`${node}`}</span>
-                                    );
-                                })}
+                        <>
+                            <div className="flex flex-col w-full">
+                                <Information headerName="depth first search" type="dfs" />
+                                <div className="w-full max-w-full overflow-x-auto flex flex-row items-center justify-between px-[2%] bg-gray-200 py-[0.1rem] border-y-2 border-black">
+                                    {DFS_Path?.map((node) => {
+                                        return (
+                                            <span className="bg-blue-800 px-1 ml-[0.25rem] rounded-sm text-white">{`${node}`}</span>
+                                        );
+                                    })}
+                                </div>
                             </div>
-                        </div>
+                            <button onClick={HandleOpenBox}
+                                className="w-full h-[1.5rem] pl-[0.5rem] text-[#0A5EB0] rounded-lg hover:text-white my-[0.2rem] text-start font-bold hover:bg-[#0A5EB0] transition-colors duration-300">• animated bfs 🫏</button>
+                        </>
                     )}
                     <div className="flex w-full">
                         <button
@@ -190,7 +197,8 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                     )}
                 </div>}
             </div>
-            {(nodeSelect !== null) && (exploration === "dfs" || exploration === "bfs")
+            {
+                (nodeSelect !== null) && (exploration === "dfs" || exploration === "bfs")
                 && <div className={`fixed flex flex-col overflow-auto overflow-x-hidden justify-between py-[0.4rem] left-[13.5rem] h-[35%] border border-l-black w-[2.2rem] transform -translate-x-1/2 -translate-y-1/2 rounded-r-md bg-white shadow-sm  shadow-black`}>
                     {Array.from({ length: numberofNode_submited }, (_, i) => (
                         <div key={`${i + 1}`} className={`h-[1.5rem] w-full text-[1rem] pl-[0.3rem] hover:bg-black hover:text-white flex items-center ${(i + 1) === Number(exploration == "dfs" ? DFS_Start : BFS_Start) ? "bg-gray-300" : "bg-white cursor-pointer"}`}
@@ -199,7 +207,8 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                                 setNodeSeclect(null)
                             }}>{i + 1}</div>
                     ))}
-                </div>}
+                </div>
+            }
         </div >
     )
 }
