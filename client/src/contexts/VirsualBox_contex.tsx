@@ -1,10 +1,17 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
 
+import { CustomNode } from "../entity/node";
+import { CustomLink } from "../entity/link";
 
 // Handling VirsualBox in mutilple conponents.
 type VirsualBox_Context_type = {
+    // Box display constroler
     isOpen: boolean,
     HandleOpenBox: () => void
+    // -------- graph data
+    baseNodes?: CustomNode[],
+    baseLinks?: CustomLink[],
+    SetGraphData?: (nodes: CustomNode[], links: CustomLink[]) => void
 }
 
 const VirsualBox_Context = createContext<VirsualBox_Context_type | undefined>(undefined)
@@ -22,12 +29,18 @@ const defaulContext: VirsualBox_Context_type = {
 
 export const VirsualBox_Provider: React.FC<VirsualBox_Props> = ({ children }) => {
     const [isOpen, setIsOpen] = useState<boolean>(false)
+    const [baseNodes, setBaseNodes] = useState<CustomNode[]>([])
+    const [baseLinks, setBaseLinks] = useState<CustomLink[]>([])
 
+    const SetGraphData = function (nodes: CustomNode[], links: CustomLink[]) {
+        setBaseNodes(nodes);
+        setBaseLinks(links)
+    }
     const HandleOpenBox = function () {
         setIsOpen(!isOpen);
     }
     return (
-        < VirsualBox_Context.Provider value={{ isOpen, HandleOpenBox }}>
+        < VirsualBox_Context.Provider value={{ isOpen, HandleOpenBox, baseNodes, baseLinks, SetGraphData }}>
             {children}
         </VirsualBox_Context.Provider>)
 }

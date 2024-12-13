@@ -336,8 +336,12 @@ const Calculator: React.FC = () => {
     }
     // ========================================================================
     // Handle Visualization ===================================================
-    const { isOpen } = useVirsualBox_context()
-
+    const { isOpen, SetGraphData } = useVirsualBox_context()
+    useEffect(() => {
+        if (isOpen) {
+            if (SetGraphData) SetGraphData(nodes, links);
+        }
+    }, [isOpen])
     return (
         <>
             {isOpen && <GraphVisualization />}
