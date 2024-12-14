@@ -44,6 +44,7 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
 
     // handlers ---------------------
     const handleRedraw = () => {
+        HandleOpenBox(false)
         dataHandler(data);
         NumberOfNode(numberOfNode);
         setNumberofNode_submited(Number(numberOfNode))
@@ -160,7 +161,7 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                                     })}
                                 </div>
                             </div>
-                            <button onClick={() => { HandleOpenBox(); SetMode('dfs') }}
+                            <button onClick={() => { HandleOpenBox(); SetMode(`dfs-${DFS_Start}`) }}
                                 className="w-full h-[1.5rem] pl-[0.5rem] text-[#0A5EB0] rounded-lg hover:text-white my-[0.2rem] text-start font-bold hover:bg-[#0A5EB0] transition-colors duration-300">• animated dfs 🫏</button>
                         </>
                     )}
@@ -207,6 +208,7 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                     {Array.from({ length: numberofNode_submited }, (_, i) => (
                         <div key={`${i + 1}`} className={`h-[1.5rem] w-full text-[1rem] pl-[0.3rem] hover:bg-black hover:text-white flex items-center ${(i + 1) === Number(exploration == "dfs" ? DFS_Start : BFS_Start) ? "bg-gray-300" : "bg-white cursor-pointer"}`}
                             onClick={() => {
+                                HandleOpenBox(false)
                                 SetNodeStart(String(i + 1));
                                 setNodeSeclect(null)
                             }}>{i + 1}</div>

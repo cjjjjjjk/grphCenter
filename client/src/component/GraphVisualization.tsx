@@ -5,6 +5,7 @@ import { useVirsualBox_context } from '../contexts/VirsualBox_contex';
 
 const GraphVisualization: React.FC = () => {
     const { HandleOpenBox, mode, baseNodes, baseLinks } = useVirsualBox_context()
+    const mode_data = mode.split('-')
 
     const cyRef = useRef<HTMLDivElement>(null);
     const [cy, setCy] = useState<cytoscape.Core | null>(null);
@@ -21,6 +22,12 @@ const GraphVisualization: React.FC = () => {
                         selector: 'node',
                         style: {
                             'content': 'data(id)'
+                        }
+                    },
+                    {
+                        selector: '.head',
+                        style: {
+                            "background-color": '#D91656'
                         }
                     },
                     {
@@ -51,7 +58,7 @@ const GraphVisualization: React.FC = () => {
                 return {
                     group: 'nodes',
                     data: {
-                        id: node.id
+                        id: node.id,
                     },
                     position: {
                         x: node.x,
@@ -69,43 +76,37 @@ const GraphVisualization: React.FC = () => {
                 }
             })
             if (nodes) cytoscapeInstance.add(nodes);
+            if (mode_data.at(1)) cytoscapeInstance.$(`#${mode_data.at(1)}`).style({ 'background-color': 'red' });
             if (links) cytoscapeInstance.add(links)
+
             setCy(cytoscapeInstance);
         }
     }, [])
     // =========================================
     // dfs -----------------------------
     let dfs = cy?.elements().dfs({
-        roots: '#2',
-        visit: (v, e, u, i, depth) => {
-            console.log("Node: ", typeof (v.id()))
-        },
-
+        roots: `#${mode_data.at(1)}`,
+        visit: (v, e, u, i, depth) => { },
     });
-    var i = 0
     let length = dfs?.path.length;
-    var highlightNextEle = function () {
+    var i = 0;
+    var RunAnimation_DFS = function () {
         if (i < (length ? length : 1)) {
             dfs?.path[i].addClass('highlighted');
             i++;
-            setTimeout(highlightNextEle, 1000);
+            setTimeout(RunAnimation_DFS, 1000);
         }
     };
-
-    // kick off first highlight
-
-
-
 
     return (
         <>
             <div className="fixed h-[90%] left-[15rem] top-[3rem] w-[80%] min-w-[48rem] bg-white rounded-lg shadow-lg shadow-gray-500">
                 <label htmlFor="" className='absolute top-[1rem] left-[1rem] text-gray-300 text-[1rem] border-l-4 border-gray-300 px-[0.5rem]'>graphCenter - visualization</label>
-                <label htmlFor="" className='absolute top-[2.7rem] left-[1rem] text-gray-300 text-[1rem] border-l-4 border-gray-300 px-[0.5rem]'>mode: {mode}</label>
+                <label htmlFor="" className='absolute top-[2.7rem] left-[1rem] text-gray-300 text-[1rem] border-l-4 border-gray-300 px-[0.5rem]'>mode: {mode_data.at(0) + "  "} start: {mode_data.at(1)}</label>
                 <button onClick={() => { HandleOpenBox() }}
                     className='absolute z-50 top-[4.5rem] left-[1rem] px-[0.5rem] py-[0.2rem] bg-slate-200 hover:bg-red-500 border-l-4 border-gray-300 rounded-r-lg  hover:text-white transition-colors duration-300'>• close
                 </button>
-                <button onClick={() => { highlightNextEle(); }}
+                <button onClick={() => { RunAnimation_DFS(); }}
                     className='absolute z-50 top-[7rem] left-[1rem] px-[0.5rem] py-[0.2rem] bg-slate-200 hover:bg-blue-500 border-l-4 border-gray-300  rounded-r-lg  hover:text-white transition-colors duration-300'>• start
                 </button>
 
