@@ -188,18 +188,20 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                                 }}>{BFS_Start}</button>}
                     </div>
                     {exploration === "bfs" && (
-                        <div className="flex flex-col w-full">
-                            <Information headerName="breadth first search" type="bfs" />
-                            <div className="w-full max-w-full overflow-x-auto flex flex-row items-center justify-between px-[2%] bg-gray-200 py-[0.1rem] border-y-2 border-black">
-                                {BFS_Path?.map((node) => {
-                                    return (
-                                        <span className="bg-blue-800 px-1 ml-[0.25rem] rounded-sm text-white">{`${node}`}</span>
-                                    );
-                                })}
+                        <>
+                            <div className="flex flex-col w-full">
+                                <Information headerName="breadth first search" type="bfs" />
+                                <div className="w-full max-w-full overflow-x-auto flex flex-row items-center justify-between px-[2%] bg-gray-200 py-[0.1rem] border-y-2 border-black">
+                                    {BFS_Path?.map((node) => {
+                                        return (
+                                            <span className="bg-blue-800 px-1 ml-[0.25rem] rounded-sm text-white">{`${node}`}</span>
+                                        );
+                                    })}
+                                </div>
                             </div>
-
-                        </div>
-                    )}
+                            <button onClick={() => { HandleOpenBox(); SetMode(`bfs-${BFS_Start}`) }}
+                                className="w-full h-[1.5rem] pl-[0.5rem] text-[#0A5EB0] rounded-lg hover:text-white my-[0.2rem] text-start font-bold hover:bg-[#0A5EB0] transition-colors duration-300">• animated dfs 🫏</button>
+                        </>)}
                 </div>}
             </div>
             {

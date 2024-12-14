@@ -25,12 +25,6 @@ const GraphVisualization: React.FC = () => {
                         }
                     },
                     {
-                        selector: '.head',
-                        style: {
-                            "background-color": '#D91656'
-                        }
-                    },
-                    {
                         selector: 'edge',
                         style: {
                             'curve-style': 'bezier',
@@ -76,25 +70,54 @@ const GraphVisualization: React.FC = () => {
                 }
             })
             if (nodes) cytoscapeInstance.add(nodes);
-            if (mode_data.at(1)) cytoscapeInstance.$(`#${mode_data.at(1)}`).style({ 'background-color': 'red' });
+            // for start node -------------------------------------- bfs, dfs only.
+            if (mode_data.at(1)) cytoscapeInstance.$(`#${mode_data.at(1)}`).style({ 'background-color': '#074799' });
             if (links) cytoscapeInstance.add(links)
 
             setCy(cytoscapeInstance);
         }
     }, [])
-    // =========================================
-    // dfs -----------------------------
-    let dfs = cy?.elements().dfs({
+    // ====================================================================================
+    // dfs -------------------------------------------------------------------------------
+    const dfs = cy?.elements().dfs({
         roots: `#${mode_data.at(1)}`,
-        visit: (v, e, u, i, depth) => { },
+        visit: (v, e, u, i, depth) => {
+            // need fix order
+        },
     });
-    let length = dfs?.path.length;
+    let dfs_length = dfs?.path.length;
     var i = 0;
-    var RunAnimation_DFS = function () {
-        if (i < (length ? length : 1)) {
+    const RunAnimation_DFS = function () {
+        if (i < (dfs_length ? dfs_length : 1)) {
             dfs?.path[i].addClass('highlighted');
+            if (dfs?.path[i].data().id === mode_data.at(1)) dfs?.path[i].removeClass('highlighted')
             i++;
             setTimeout(RunAnimation_DFS, 1000);
+        }
+    };
+    // bfs -------------------------------------------------------------------------------
+    const SHow_BFSLayout = () => {
+        if (cy) cy.layout({
+            name: 'breadthfirst',
+            roots: [`${mode_data.at(1)}`],
+            fit: true,
+            animate: true,
+            animationDuration: 500,
+        }).run();
+    };
+    const bfs = cy?.elements().bfs({
+        root: `#${mode_data.at(1)}`,
+        visit: (v, e, u, i, depth) => {
+            // need fix order 
+        }
+    })
+    let bfs_length = bfs?.path.length;
+    const RunAnimation_BFS = function () {
+        if (i < (bfs_length ? bfs_length : 1)) {
+            bfs?.path[i].addClass('highlighted');
+            if (bfs?.path[i].data().id === mode_data.at(1)) bfs?.path[i].removeClass('highlighted')
+            i++;
+            setTimeout(RunAnimation_BFS, 1000);
         }
     };
 
@@ -104,10 +127,17 @@ const GraphVisualization: React.FC = () => {
                 <label htmlFor="" className='absolute top-[1rem] left-[1rem] text-gray-300 text-[1rem] border-l-4 border-gray-300 px-[0.5rem]'>graphCenter - visualization</label>
                 <label htmlFor="" className='absolute top-[2.7rem] left-[1rem] text-gray-300 text-[1rem] border-l-4 border-gray-300 px-[0.5rem]'>mode: {mode_data.at(0) + "  "} start: {mode_data.at(1)}</label>
                 <button onClick={() => { HandleOpenBox() }}
-                    className='absolute z-50 top-[4.5rem] left-[1rem] px-[0.5rem] py-[0.2rem] bg-slate-200 hover:bg-red-500 border-l-4 border-gray-300 rounded-r-lg  hover:text-white transition-colors duration-300'>• close
+                    className='absolute w-[6rem] text-start z-50 top-[4.5rem] left-[1rem] px-[0.5rem] py-[0.2rem] bg-slate-200 hover:bg-red-500 border-l-4 border-gray-300 rounded-r-lg  hover:text-white transition-colors duration-300'>• close
                 </button>
-                <button onClick={() => { RunAnimation_DFS(); }}
-                    className='absolute z-50 top-[7rem] left-[1rem] px-[0.5rem] py-[0.2rem] bg-slate-200 hover:bg-blue-500 border-l-4 border-gray-300  rounded-r-lg  hover:text-white transition-colors duration-300'>• start
+                <button onClick={() => { SHow_BFSLayout() }} title='show bfs layout'
+                    className='absolute w-[6rem] text-start z-50 top-[7rem] left-[1rem] px-[0.5rem] py-[0.2rem] bg-slate-200 hover:bg-green-500 border-l-4 border-gray-300  rounded-r-lg  hover:text-white transition-colors duration-300'>• layout
+                </button>
+                <button
+                    onClick={() => {
+                        if (mode_data.at(0) === 'dfs') RunAnimation_DFS();
+                        if (mode_data.at(0) === 'bfs') RunAnimation_BFS()
+                    }}
+                    className='absolute w-[6rem] text-start z-50 top-[9.5rem] left-[1rem] px-[0.5rem] py-[0.2rem] bg-slate-200 hover:bg-blue-500 border-l-4 border-gray-300  rounded-r-lg  hover:text-white transition-colors duration-300'>• start
                 </button>
 
 
