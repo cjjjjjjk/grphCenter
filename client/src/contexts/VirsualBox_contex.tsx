@@ -6,8 +6,11 @@ import { CustomLink } from "../entity/link";
 // Handling VirsualBox in mutilple conponents.
 type VirsualBox_Context_type = {
     // Box display constroler
+    mode: string,
+    SetMode: (mode: string) => void,
+    isUpdate?: boolean,
     isOpen: boolean,
-    HandleOpenBox: () => void
+    HandleOpenBox: (value?: boolean) => void
     // -------- graph data
     baseNodes?: CustomNode[],
     baseLinks?: CustomLink[],
@@ -21,6 +24,8 @@ type VirsualBox_Props = {
 }
 
 const defaulContext: VirsualBox_Context_type = {
+    mode: '',
+    SetMode: () => { },
     isOpen: false,
     HandleOpenBox: () => {
         console.log("Default context !")
@@ -28,19 +33,27 @@ const defaulContext: VirsualBox_Context_type = {
 }
 
 export const VirsualBox_Provider: React.FC<VirsualBox_Props> = ({ children }) => {
+    const [mode, setMode] = useState<string>('')
     const [isOpen, setIsOpen] = useState<boolean>(false)
+    const [isUpdate, setIsUpdate] = useState<boolean>(false)
     const [baseNodes, setBaseNodes] = useState<CustomNode[]>([])
     const [baseLinks, setBaseLinks] = useState<CustomLink[]>([])
+
+    const SetMode = function (mode: string) {
+        setMode(mode)
+    }
 
     const SetGraphData = function (nodes: CustomNode[], links: CustomLink[]) {
         setBaseNodes(nodes);
         setBaseLinks(links)
+        setIsUpdate(true)
     }
-    const HandleOpenBox = function () {
-        setIsOpen(!isOpen);
+    const HandleOpenBox = function (check?: boolean) {
+        setIsOpen(check !== undefined ? check : !isOpen);
+        if (!isOpen || check === false) setIsUpdate(false)
     }
     return (
-        < VirsualBox_Context.Provider value={{ isOpen, HandleOpenBox, baseNodes, baseLinks, SetGraphData }}>
+        < VirsualBox_Context.Provider value={{ isOpen, HandleOpenBox, mode, SetMode, baseNodes, baseLinks, SetGraphData, isUpdate }}>
             {children}
         </VirsualBox_Context.Provider>)
 }

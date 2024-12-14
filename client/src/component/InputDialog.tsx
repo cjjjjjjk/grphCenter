@@ -56,7 +56,7 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
     }, [exploration])
 
     // VirsualBox context ==============
-    const { HandleOpenBox } = useVirsualBox_context();
+    const { HandleOpenBox, SetMode } = useVirsualBox_context();
     return (
         <div className={`${className} stop-0 left-0 max-w-[13rem] h-screen pr-[0.5rem] shadow-sm shadow-black text-black`}>
             <div className="pt-[2.5rem] pl-[0.75rem] overflow-hidden">
@@ -101,6 +101,7 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                     <button
                         className={`w-full text-left transition-color duration-100  whitespace-nowrap ${exploration === "mst" ? " bg-black text-white" : "hover:text-[#003161] hover:underline"}`}
                         onClick={() => {
+                            HandleOpenBox(false)
                             if (exploration === "mst") {
                                 setExploration("none");
                                 Exploration("none")
@@ -114,6 +115,7 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                     <button
                         className={`w-full text-left transition-color duration-100  whitespace-nowrap ${exploration === "hamiton" ? "bg-black text-white" : "hover:text-[#003161] hover:underline"}`}
                         onClick={() => {
+                            HandleOpenBox(false)
                             if (exploration === "hamiton") {
                                 setExploration("none");
                                 Exploration("none")
@@ -128,6 +130,7 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                         <button
                             className={`flex justify-between items-center whitespace-nowrap ${exploration === "dfs" ? "w-[80%] bg-black text-white" : "w-full hover:text-[#003161] hover:underline"}`}
                             onClick={() => {
+                                HandleOpenBox(false)
                                 if (exploration === "dfs") {
                                     setExploration("none");
                                     Exploration("none")
@@ -157,14 +160,15 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                                     })}
                                 </div>
                             </div>
-                            <button onClick={HandleOpenBox}
-                                className="w-full h-[1.5rem] pl-[0.5rem] text-[#0A5EB0] rounded-lg hover:text-white my-[0.2rem] text-start font-bold hover:bg-[#0A5EB0] transition-colors duration-300">• animated bfs 🫏</button>
+                            <button onClick={() => { HandleOpenBox(); SetMode('dfs') }}
+                                className="w-full h-[1.5rem] pl-[0.5rem] text-[#0A5EB0] rounded-lg hover:text-white my-[0.2rem] text-start font-bold hover:bg-[#0A5EB0] transition-colors duration-300">• animated dfs 🫏</button>
                         </>
                     )}
                     <div className="flex w-full">
                         <button
                             className={`flex justify-between items-center whitespace-nowrap ${exploration === "bfs" ? "w-[80%] bg-black text-white" : "w-full hover:text-[#003161] hover:underline"}`}
                             onClick={() => {
+                                HandleOpenBox(false)
                                 if (exploration === "bfs") {
                                     setExploration("none");
                                     Exploration("none")

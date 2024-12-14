@@ -46,6 +46,9 @@ const Calculator: React.FC = () => {
     const [DFS_Path, setDFSPath] = useState<string[]>([])
     const [BFS_Start, setBFS_Start] = useState("")
     const [BFS_Path, setBFSPath] = useState<string[]>([])
+    // virsualization: 
+    const { isOpen, isUpdate, SetGraphData } = useVirsualBox_context()
+
     // get data from components-------------------------------
     // graph type : string ----------------
     const handleGraphType = function (graphType: string) {
@@ -135,6 +138,8 @@ const Calculator: React.FC = () => {
     }, []);
     // render basic graph 
     useEffect(() => {
+        if (isOpen) return;
+        if (svgDimensions.width < 600) return;
         // render nodes: declare node's properties ---
         const nodesfromData: CustomNode[] = []
         for (let i = 1; i <= numberofNodes; i++) {
@@ -177,6 +182,8 @@ const Calculator: React.FC = () => {
         setBFS_Start(nodesfromData[0]?.id)
         setNodes(nodesfromData);
         setLinks(linksfromData)
+        // set virsualization data
+        if (SetGraphData) SetGraphData(nodesfromData, linksfromData);
     }, // recall when: newdata, redraw , change svg size 
         [reDraw, svgDimensions])
     // update radious 
@@ -336,7 +343,6 @@ const Calculator: React.FC = () => {
     }
     // ========================================================================
     // Handle Visualization ===================================================
-    const { isOpen, SetGraphData } = useVirsualBox_context()
     useEffect(() => {
         if (isOpen) {
             if (SetGraphData) SetGraphData(nodes, links);
@@ -344,7 +350,7 @@ const Calculator: React.FC = () => {
     }, [isOpen])
     return (
         <>
-            {isOpen && <GraphVisualization />}
+            {isOpen && isUpdate && <GraphVisualization />}
             <div className="absolute z-50">
                 <ToolHeader graphType={handleGraphType} showMenu={handleShowMenu} />
             </div>

@@ -6,7 +6,8 @@ const dfs = function (currentNode: string, neighborNodes: Map<string, string[]>,
     flag.set(currentNode, true)
     path.push(currentNode)
 
-    neighborNodes.get(currentNode)?.sort((a, b) => Number(a) - Number(b));
+    // Order from largest to smallest 5 3 2 1 0 (for library cytoscape)
+    neighborNodes.get(currentNode)?.sort((a, b) => Number(b) - Number(a));
     neighborNodes.get(currentNode)?.forEach((node) => {
         dfs(node, neighborNodes, path, flag);
     })
