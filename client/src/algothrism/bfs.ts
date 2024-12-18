@@ -47,7 +47,6 @@ export const BfsReturnnewGraph = function ({ nodes: base_Nodes, links: base_Link
 
     const path: string[] = []
     BFS(startNode, path, neighborNodes, BFSFlag, NodeDad)
-    console.log(path)
 
     path.forEach((node) => {
         rs_nodes.map((rs_node) => {

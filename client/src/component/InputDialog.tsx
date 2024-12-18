@@ -200,7 +200,7 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                                 </div>
                             </div>
                             <button onClick={() => { HandleOpenBox(); SetMode(`bfs-${BFS_Start}`) }}
-                                className="w-full h-[1.5rem] pl-[0.5rem] text-[#0A5EB0] rounded-lg hover:text-white my-[0.2rem] text-start font-bold hover:bg-[#0A5EB0] transition-colors duration-300">• animated dfs 🫏</button>
+                                className="w-full h-[1.5rem] pl-[0.5rem] text-[#0A5EB0] rounded-lg hover:text-white my-[0.2rem] text-start font-bold hover:bg-[#0A5EB0] transition-colors duration-300">• animated bfs 🫏</button>
                         </>)}
                 </div>}
             </div>
