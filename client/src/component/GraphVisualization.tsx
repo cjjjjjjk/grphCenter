@@ -4,7 +4,7 @@ import cytoscape, { ElementDefinition } from 'cytoscape';
 import { useVirsualBox_context } from '../contexts/VirsualBox_contex';
 
 const GraphVisualization: React.FC = () => {
-    const { HandleOpenBox, mode, baseNodes, baseLinks } = useVirsualBox_context()
+    const { HandleOpenBox, mode, baseNodes, baseLinks, orderList, link_orderList } = useVirsualBox_context()
     const mode_data = mode.split('-')
 
     const cyRef = useRef<HTMLDivElement>(null);
@@ -61,12 +61,15 @@ const GraphVisualization: React.FC = () => {
                 }
             })
             const links: ElementDefinition[] | undefined = baseLinks?.map((link) => {
+
                 return {
                     group: 'edges',
                     data: {
+                        id: link.id,
                         source: link.source.id,
                         target: link.target.id
-                    }
+                    },
+                    'flag': link.flag,
                 }
             })
             if (nodes) cytoscapeInstance.add(nodes);
@@ -82,14 +85,19 @@ const GraphVisualization: React.FC = () => {
     const dfs = cy?.elements().dfs({
         roots: `#${mode_data.at(1)}`,
         visit: (v, e, u, i, depth) => {
-            // need fix order
         },
+        directed: false,
     });
-    let dfs_length = dfs?.path.length;
-    var i = 0;
+    const dfs_length = (orderList?.length ? orderList?.length : 1) * 2 - 1;
+    let i = 0;
+    const linkorder: string[] | undefined = link_orderList?.slice()
     const RunAnimation_DFS = function () {
-        if (i < (dfs_length ? dfs_length : 1)) {
-            dfs?.path[i].addClass('highlighted');
+        if (i < (dfs_length)) {
+            // highlight nodes ---------
+            if (i % 2 === 0 && orderList) cy?.$(`#${orderList.at(i / 2)}`).addClass('highlighted')
+            // highlight edges-------
+            if (i % 2 === 1 && linkorder) cy?.$(`#${linkorder.shift()}`).addClass('highlighted')
+
             if (dfs?.path[i].data().id === mode_data.at(1)) dfs?.path[i].removeClass('highlighted')
             i++;
             setTimeout(RunAnimation_DFS, 1000);
@@ -113,6 +121,7 @@ const GraphVisualization: React.FC = () => {
     })
     let bfs_length = bfs?.path.length;
     const RunAnimation_BFS = function () {
+        let i = 0;
         if (i < (bfs_length ? bfs_length : 1)) {
             bfs?.path[i].addClass('highlighted');
             if (bfs?.path[i].data().id === mode_data.at(1)) bfs?.path[i].removeClass('highlighted')

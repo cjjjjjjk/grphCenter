@@ -14,7 +14,14 @@ type VirsualBox_Context_type = {
     // -------- graph data
     baseNodes?: CustomNode[],
     baseLinks?: CustomLink[],
-    SetGraphData?: (nodes: CustomNode[], links: CustomLink[]) => void
+    SetGraphData?: (nodes: CustomNode[], links: CustomLink[]) => void,
+
+
+    // algorithsms ----------
+    orderList?: string[],
+    link_orderList?: string[],
+    SetOrderList?: (value?: string[], link_value?: string[]) => void,
+
 }
 
 const VirsualBox_Context = createContext<VirsualBox_Context_type | undefined>(undefined)
@@ -39,6 +46,14 @@ export const VirsualBox_Provider: React.FC<VirsualBox_Props> = ({ children }) =>
     const [baseNodes, setBaseNodes] = useState<CustomNode[]>([])
     const [baseLinks, setBaseLinks] = useState<CustomLink[]>([])
 
+    // algorithsm ------
+    const [orderList, setOrderList] = useState<string[]>([])
+    const [link_orderList, setLink_orderList] = useState<string[]>([])
+    const SetOrderList = function (nodepath?: string[], linkpath?: string[]) {
+        if (nodepath) setOrderList(nodepath);
+        if (linkpath) setLink_orderList(linkpath)
+    }
+
     const SetMode = function (mode: string) {
         setMode(mode)
     }
@@ -53,7 +68,7 @@ export const VirsualBox_Provider: React.FC<VirsualBox_Props> = ({ children }) =>
         if (!isOpen || check === false) setIsUpdate(false)
     }
     return (
-        < VirsualBox_Context.Provider value={{ isOpen, HandleOpenBox, mode, SetMode, baseNodes, baseLinks, SetGraphData, isUpdate }}>
+        < VirsualBox_Context.Provider value={{ isOpen, HandleOpenBox, mode, SetMode, baseNodes, baseLinks, SetGraphData, isUpdate, orderList, link_orderList, SetOrderList }}>
             {children}
         </VirsualBox_Context.Provider>)
 }

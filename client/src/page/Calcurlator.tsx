@@ -47,7 +47,7 @@ const Calculator: React.FC = () => {
     const [BFS_Start, setBFS_Start] = useState("")
     const [BFS_Path, setBFSPath] = useState<string[]>([])
     // virsualization: 
-    const { isOpen, isUpdate, SetGraphData } = useVirsualBox_context()
+    const { isOpen, isUpdate, SetGraphData, SetOrderList } = useVirsualBox_context()
 
     // get data from components-------------------------------
     // graph type : string ----------------
@@ -139,7 +139,7 @@ const Calculator: React.FC = () => {
     // render basic graph 
     useEffect(() => {
         if (isOpen) return;
-        if (svgDimensions.width < 600) return;
+        if (svgDimensions.width < 200) return;
         // render nodes: declare node's properties ---
         const nodesfromData: CustomNode[] = []
         for (let i = 1; i <= numberofNodes; i++) {
@@ -163,14 +163,17 @@ const Calculator: React.FC = () => {
         // declare link's properties -----------------
         const lines = data.split('\n')
         if (!lines) return;
+        var link_id_cout = 0;
         const linksfromData = lines.slice().map((line) => {
+
             if (line.trim()) {
                 const [u, v, w] = line.split(" ").map(Number)
+                const id = link_id_cout++;
                 const startNode = nodesfromData.find(node => node.id === u.toString());
                 const endNode = nodesfromData.find(node => node.id === v.toString());
                 if (!startNode || !endNode) return undefined;
                 if (startNode && endNode) {
-                    const newLink: CustomLink = { source: startNode, target: endNode, weight: w, flag: false }
+                    const newLink: CustomLink = { id: `link-${String(id)}`, source: startNode, target: endNode, weight: w, flag: false }
                     return newLink;
                 }
             }
@@ -197,7 +200,7 @@ const Calculator: React.FC = () => {
 
     // Update Graph with algthrism ----------------------
     useEffect(() => {
-        var ResultGraph: { nodes: CustomNode[], links: CustomLink[], MST?: number, hamiton?: boolean, path?: string[] } = { nodes: base_nodes, links: base_links };
+        var ResultGraph: { nodes: CustomNode[], links: CustomLink[], MST?: number, hamiton?: boolean, path?: string[], linkpath?: string[] } = { nodes: base_nodes, links: base_links };
         if (exploration == "mst") {
             ResultGraph = KruskalReturnNewNodesandLinks(base_nodes, base_links)
             setRs_MST(ResultGraph.MST ? ResultGraph.MST : NaN)
@@ -209,10 +212,12 @@ const Calculator: React.FC = () => {
         else if (exploration == "dfs") {
             ResultGraph = DFSReturnNewGraph({ nodes: base_nodes, links: base_links, startNode: DFS_Start })
             setDFSPath(ResultGraph.path ? ResultGraph.path : [])
+            if (SetOrderList) SetOrderList(ResultGraph.path, ResultGraph.linkpath)
         }
         else if (exploration == "bfs") {
             ResultGraph = BfsReturnnewGraph({ nodes: base_nodes, links: base_links }, BFS_Start)
             setBFSPath(ResultGraph.path ? ResultGraph.path : [])
+            if (SetOrderList) SetOrderList(ResultGraph.path)
         }
         else if (exploration == "") {
             return;

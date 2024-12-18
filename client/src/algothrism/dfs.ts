@@ -6,18 +6,18 @@ const dfs = function (currentNode: string, neighborNodes: Map<string, string[]>,
     flag.set(currentNode, true)
     path.push(currentNode)
 
-    // Order from largest to smallest 5 3 2 1 0 (for library cytoscape)
-    neighborNodes.get(currentNode)?.sort((a, b) => Number(b) - Number(a));
+    neighborNodes.get(currentNode)?.sort((a, b) => Number(a) - Number(b));
     neighborNodes.get(currentNode)?.forEach((node) => {
         dfs(node, neighborNodes, path, flag);
     })
     return;
 }
-const DFSReturnNewGraph = function ({ nodes: base_Nodes, links: base_Links, startNode: startNode }: { nodes: CustomNode[], links: CustomLink[], startNode: string }): { nodes: CustomNode[], links: CustomLink[], path: string[] } {
+const DFSReturnNewGraph = function ({ nodes: base_Nodes, links: base_Links, startNode: startNode }: { nodes: CustomNode[], links: CustomLink[], startNode: string }): { nodes: CustomNode[], links: CustomLink[], path: string[], linkpath: string[] } {
     let rs_nodes: CustomNode[] = base_Nodes.map((node) => ({ ...node }));
     let rs_links: CustomLink[] = base_Links.map((link) => ({ ...link }));
 
-    const path: string[] = []
+    const Nodepath: string[] = []
+    const Linkpath: string[] = []
     const flag: Map<string, boolean> = new Map()
 
     let neighborNodes: Map<string, string[]> = new Map();
@@ -31,26 +31,32 @@ const DFSReturnNewGraph = function ({ nodes: base_Nodes, links: base_Links, star
         neighborNodes.get(e)?.push(v);
     });
 
-    dfs(startNode, neighborNodes, path, flag)
+    dfs(startNode, neighborNodes, Nodepath, flag)
 
 
-    path.forEach((node) => {
+    Nodepath.forEach((node) => {
         rs_nodes.map((rs_node) => {
             if (rs_node.id === node) {
                 rs_node.flag = true;
             }
         })
-        rs_links.forEach((link) => {
-            const sourceIndex = path.indexOf(link.source.id);
-            const targetIndex = path.indexOf(link.target.id);
-            if ((Math.abs(sourceIndex - targetIndex) === 1)) {
-                link.flag = true;
-            }
-        });
     })
 
-    console.log("DFS Path: ", path)
-    return { nodes: rs_nodes, links: rs_links, path }
+    for (let i = 0; i < Nodepath.length - 1; i++) {
+        const sourceId = Nodepath[i];
+        const targetId = Nodepath[i + 1];
+        const link = rs_links.find(link =>
+            (link.source.id === sourceId && link.target.id === targetId) ||
+            (link.source.id === targetId && link.target.id === sourceId)
+        );
+        if (link) {
+            link.flag = true;
+            if (!Linkpath.includes(link.id)) Linkpath.push(link.id);
+        }
+    }
+
+    console.log("DFS NodePath: ", Nodepath)
+    return { nodes: rs_nodes, links: rs_links, path: Nodepath, linkpath: Linkpath }
 }
 
 export default DFSReturnNewGraph
