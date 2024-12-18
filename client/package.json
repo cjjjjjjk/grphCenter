@@ -13,6 +13,7 @@
     "@visx/visx": "^3.12.0",
     "axios": "1.7.8",
     "cytoscape": "3.30.4",
+    "dotenv": "16.4.7",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",
     "react": "^18.3.1",

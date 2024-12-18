@@ -1,12 +1,20 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useRippleEffect } from "../effect/ripple";
 
+import { useUserContext } from "../contexts/UserInfor_context";
 const MainHeader: React.FC = function () {
-
+    const { username } = useUserContext()
     const location = useLocation()
     const hideHeader = location.pathname === '/calcurlator'
     const addrippleEffect = useRippleEffect()
+
+    // login/home/usename button handle-------------------------------
+    const HandleUserButtonShow = function (): string {
+        if (username) return `• ${username}`
+        return (location.pathname === "/login" ? "• home" : "• login")
+    }
+    // ---------------------------------------------------------------
 
     return (
         <>
@@ -23,7 +31,8 @@ const MainHeader: React.FC = function () {
                                 </button>
                             </NavLink>
                             <NavLink to={location.pathname !== "/login" ? "/login" : "/"}>
-                                <button type="button" className="text-[0.9rem] bg-white px-[0.75rem] h-[2.75rem] text-[#0A5EB0] rounded-full transition-colors duration-300  hover:text-[#0A5EB0] hover:font-bold hover:bg-[#EBEAFF] ">{location.pathname === "/login" ? "• home" : "• login"}
+                                <button type="button" className="text-[0.9rem] bg-white px-[0.75rem] h-[2.75rem] text-[#0A5EB0] rounded-full transition-colors duration-300  hover:text-[#0A5EB0] hover:font-bold hover:bg-[#EBEAFF] ">
+                                    {HandleUserButtonShow()}
                                 </button>
                             </NavLink>
                         </div>

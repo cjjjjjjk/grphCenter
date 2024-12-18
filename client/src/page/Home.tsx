@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 
 const Home: React.FC = function () {
+
+
+
     return (
         <div className='flex h-full items-center mx-auto px-6 md:px-8 lg:max-w-[1216px] lg:px-0'>
             <main className="flex bg-white h-full flex-col justify-between font-sans text-neutral-900">
