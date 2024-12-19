@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useRippleEffect } from "../effect/ripple";
 
 import { useUserContext } from "../contexts/UserInfor_context";
 const MainHeader: React.FC = function () {
     const { username } = useUserContext()
+    const [username_show, setUsername_show] = useState<string>('guest')
     const location = useLocation()
     const hideHeader = location.pathname === '/calcurlator'
     const addrippleEffect = useRippleEffect()
@@ -12,9 +13,16 @@ const MainHeader: React.FC = function () {
     // login/home/usename button handle-------------------------------
     const HandleUserButtonShow = function (): string {
         if (username) return `• ${username}`
+        if (username_show !== 'guest') return `• ${username_show}`
         return (location.pathname === "/login" ? "• home" : "• login")
     }
     // ---------------------------------------------------------------
+
+    useEffect(() => {
+        const username_sessionstorage = sessionStorage.getItem('username')
+        if (username_sessionstorage) setUsername_show(username_sessionstorage)
+
+    }, [])
 
     return (
         <>
@@ -31,7 +39,7 @@ const MainHeader: React.FC = function () {
                                 </button>
                             </NavLink>
                             <NavLink to={location.pathname !== "/login" ? "/login" : "/"}>
-                                <button type="button" className="text-[0.9rem] bg-white px-[0.75rem] h-[2.75rem] text-[#0A5EB0] rounded-full transition-colors duration-300  hover:text-[#0A5EB0] hover:font-bold hover:bg-[#EBEAFF] ">
+                                <button type="button" className="text-[0.9rem] bg-white px-[0.75rem] h-[2.75rem] text-[#0A5EB0] rounded-full transition-colors duration-300  hover:text-[#0A5EB0] hover:font-bold hover:bg-[#EBEAFF] whitespace-nowrap">
                                     {HandleUserButtonShow()}
                                 </button>
                             </NavLink>

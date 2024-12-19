@@ -7,31 +7,40 @@ import axios from "axios";
 
 const Register: React.FC = function () {
     const navigate = useNavigate()
+    const [canSubmit, setcanSubmit] = useState<boolean>(false)
     const [username, setUserName] = useState<string>("")
-    const [email, setEmail] = useState<string>("")
+    const [email, setEmail] = useState<string>("'")
     const [password, setPassword] = useState<string>("")
     const [confirmPassword, setConfirmPassword] = useState<string>("")
 
     const [usernameWarning, setUsernameWarning] = useState<string>("")
+    const [emailWarning, setEmailWarning] = useState<string>("")
     const [passwordWarning, setPasswordWarning] = useState<string>("")
     const [confirmpasswordWarning, setConfirmPasswordWarning] = useState<string>("")
+    // Validattion =========================================================================
     useEffect(() => {
-        if (username == "") setUsernameWarning("")
+        if (username.length <= 10) setUsernameWarning("");
         if (username.includes(" ")) setUsernameWarning("include invalid character")
         if (username.length > 10) setUsernameWarning("too long")
     }, [username])
     useEffect(() => {
-
-    }, [password])
-    // Validattion =========================================================================
+        if (email === "") setEmailWarning("email can no be empty");
+        else setEmailWarning("")
+    }, [email])
     useEffect(() => {
         if (password === confirmPassword || confirmPassword === "") setConfirmPasswordWarning("");
         else setConfirmPasswordWarning("wrong ! check again ")
     }, [confirmPassword])
+    useEffect(() => {
+        if (usernameWarning === "" && emailWarning === "" && confirmpasswordWarning === "")
+            setcanSubmit(true);
+        else setcanSubmit(false)
+    }, [usernameWarning, emailWarning, confirmpasswordWarning])
     // =====================================================================================
     // call api : create new user ==========================================================
     const HandleRegister = async function () {
         try {
+            if (!canSubmit) return;
             const response = await axios.post(`${process.env.REACT_APP_URL_SERVER}api/users/create`, { username, password, email });
 
             navigate('/login')
@@ -57,7 +66,7 @@ const Register: React.FC = function () {
                     <label htmlFor="" className="pl-[0.25rem] font-bold ">• email</label>
                     <input autoFocus type="text" className="h-[2rem] rounded-r-lg bg-[#FBFBFB] shadow-sm shadow-gray-300 px-[0.25rem] focus:outline-none focus:bg-[#FFFBF5] focus:border-l-[3px] border-[#003161] text-[0.75rem] transition-colors duration-400" placeholder="enter your username"
                         onChange={(e) => { setEmail(e.target.value) }}></input>
-                    <span id="username-warning" className="text-red-500 text-[0.5rem] h-[1rem] pl-[0.25rem]">{(usernameWarning !== "") ? `• ${usernameWarning}!` : ""}</span>
+                    <span id="username-warning" className="text-red-500 text-[0.5rem] h-[1rem] pl-[0.25rem]">{(emailWarning !== "") ? `• ${emailWarning}!` : ""}</span>
                 </div>
                 <div id="password-box" className="flex flex-col px-[1rem] text-[0.75rem] mt-[0.5rem]">
                     <label htmlFor="" className="pl-[0.25rem] font-bold ">• password</label>

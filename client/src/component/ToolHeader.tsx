@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 
 //effects ------------------------
@@ -13,6 +13,9 @@ interface ToolHeaderProps {
 // Main component =====================================================
 // header tool : import, export graphs handle -------------------------
 const ToolHeader: React.FC<ToolHeaderProps> = function ({ graphType, showMenu }) {
+    // user infor
+    const [username, SetUserName] = useState<string>('guest')
+
     // design effects ----------
     const addrippleEffect = useRippleEffect()
     // states
@@ -28,6 +31,18 @@ const ToolHeader: React.FC<ToolHeaderProps> = function ({ graphType, showMenu })
         if (showGraphSelection) hanldleGraphSelection()
         showMenu(!isSHowMenu)
     }
+
+    useEffect(() => {
+        const username_sessionstorage = sessionStorage.getItem('username')
+        if (username_sessionstorage) SetUserName(username_sessionstorage);
+    }, [])
+
+    // Handling login button
+    const Handling_LoginButtonLabel = function (): string {
+        if (username !== 'guest') return username
+        else return 'sign in';
+    }
+    // ----------------------------------------------------
 
     return (
         <header className="fixed top-0 z-50 h-[2.5rem] w-full bg-white pl-[0.75rem] pr-[1rem] App-font text-[1rem] border-b shadow-sm shadow-black ">
@@ -83,7 +98,7 @@ const ToolHeader: React.FC<ToolHeaderProps> = function ({ graphType, showMenu })
                     </NavLink>
                     <span className="mr-1">|</span>
                     <NavLink to='/login'>
-                        <button className="h-[1.5rem] w-[4rem] rounded-full px-[0.2rem] hover:text-white hover:bg-black hover:font-bold transition-colors duration-500">sign in</button>
+                        <button className="h-[1.5rem] w-[4rem] rounded-full px-[0.2rem] hover:text-white hover:bg-black hover:font-bold transition-colors duration-500">{Handling_LoginButtonLabel()}</button>
                     </NavLink>
                 </div>
             </div>
