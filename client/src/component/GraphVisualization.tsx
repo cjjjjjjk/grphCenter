@@ -38,11 +38,11 @@ const GraphVisualization: React.FC = () => {
                     {
                         selector: '.highlighted',
                         style: {
-                            'background-color': '#61bffc',
-                            'line-color': '#61bffc',
-                            'target-arrow-color': '#61bffc',
+                            'background-color': '#640D5F',
+                            'line-color': '#640D5F',
+                            'target-arrow-color': '#640D5F',
                             'transition-property': 'background-color, line-color, target-arrow-color',
-                            'transition-duration': 500
+                            'transition-duration': 200
                         }
                     }
                 ]
@@ -74,7 +74,7 @@ const GraphVisualization: React.FC = () => {
             })
             if (nodes) cytoscapeInstance.add(nodes);
             // for start node -------------------------------------- bfs, dfs only.
-            if (mode_data.at(1)) cytoscapeInstance.$(`#${mode_data.at(1)}`).style({ 'background-color': '#074799' });
+            if (mode_data.at(1)) cytoscapeInstance.$(`#${mode_data.at(1)}`).style({ 'background-color': '#D91656' });
             if (links) cytoscapeInstance.add(links)
 
             setCy(cytoscapeInstance);
@@ -111,12 +111,27 @@ const GraphVisualization: React.FC = () => {
         while (i !== 0 && i === type.indexOf(currTypt ? currTypt : 'cose')) { i = Math.floor(Math.random() * type.length); };
         setCurrentLayout(type.at(i))
         if (cy) {
-            if (currTypt == 'breadthfirst')
+            if (currTypt == 'breadthfirst') {
                 cy.layout({ name: `breadthfirst`, fit: true, roots: [`${mode_data.at(1)}`], animate: true, animationDuration: 300, }).run();
+                cy.style()
+                    .selector('edge')
+                    .style({
+                        'curve-style': 'unbundled-bezier',
+                        'control-point-step-size': 20,
+                    })
+                    .update();
+            }
             if (currTypt == 'random')
                 cy.layout({ name: `random`, fit: true, animate: true, animationDuration: 300, }).run();
-            if (currTypt == 'circle')
+            if (currTypt == 'circle') {
                 cy.layout({ name: `circle`, fit: true, animate: true, animationDuration: 300, }).run();
+                cy.style()
+                    .selector('edge')
+                    .style({
+                        'curve-style': 'bezier',
+                    })
+                    .update();
+            }
             if (currTypt == 'cose')
                 cy.layout({ name: `cose`, fit: true, animate: true, animationDuration: 300, }).run();
             if (currTypt == 'concentric')

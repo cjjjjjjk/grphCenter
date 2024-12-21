@@ -26,9 +26,9 @@ interface ComponentInputProps {
 const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, className, dataHandler, ReDraw, NumberOfNode, Exploration, MST, HAMITON, SetNodeStart, DFS_Start, DFS_Path, BFS_Start, BFS_Path, }) {
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
     const [isDrawed, setIsDrawed] = useState(false)
-    const [data, setData] = useState("1 3 8\n1 5 \n1 7 3\n2 4 4\n2 5 9\n2 6\n3 4\n3 5 10\n3 7 1\n4 6\n4 7 2\n5 7 7\n6 7")
-    const [numberOfNode, setNumberOfNodes] = useState("7")
-    const [numberofNode_submited, setNumberofNode_submited] = useState<number>(7)
+    const [data, setData] = useState("8 6\n12 14\n1 15\n2 10\n1 4\n7 8\n2 7\n9 7\n5 11\n10 13\n8 12\n12 6\n4 11\n15 2\n8 2\n6 3\n1 4\n11 13\n6 1\n13 10\n8 3\n3 12\n14 13\n1 9\n13 5")
+    const [numberOfNode, setNumberOfNodes] = useState("15")
+    const [numberofNode_submited, setNumberofNode_submited] = useState<number>(15)
     const [exploration, setExploration] = useState<string>("")
     const [nodeSelect, setNodeSeclect] = useState<string | null>(null)
 
