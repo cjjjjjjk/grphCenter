@@ -26,7 +26,7 @@ const Login: React.FC = function () {
     const [loginWarning, setloginWarning] = useState<string>("")
     useEffect(() => {
         if (username.length <= 10) setUsernameWarning("")
-        if (username.includes(" ")) setUsernameWarning("include invalid character")
+        if (username.trim().includes(" ")) setUsernameWarning("include invalid character")
         if (username.length > 10) setUsernameWarning("too long")
         setloginWarning("")
     }, [username])
@@ -37,8 +37,10 @@ const Login: React.FC = function () {
     // Handle Login ===============================================
     const { SetUserName } = useUserContext()
     const HandleLogin = async function () {
+        setloginWarning('loginning')
         if (!usernameWarning && !passwordWarning)
             try {
+
                 const Login_res = await axios.post(`${process.env.REACT_APP_URL_SERVER}api/users/login`, { username, password })
                 if (Login_res.data.success) {
                     const tokenDecode_data = decodeToken(Login_res.data.token)
@@ -48,15 +50,20 @@ const Login: React.FC = function () {
                     SetUserName(tokenDecode_data.username)
                     navigate('/')
                 }
-                setloginWarning(Login_res.data.message)
+                setTimeout(() => {
+                    setloginWarning(Login_res.data.message.toLowerCase())
+                }, 1000)
                 return;
             } catch (err) {
+                setloginWarning("server error !")
                 console.log(err)
             }
         else return;
     }
     const HandlEnterLogin = function (e: React.KeyboardEvent<HTMLInputElement>) {
-        if (e.key === 'Enter') HandleLogin();
+        if (e.key === 'Enter') {
+            setTimeout(() => { HandleLogin() }, 1000);
+        }
         return;
     }
     // =============================================================
