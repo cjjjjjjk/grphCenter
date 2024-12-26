@@ -32,6 +32,7 @@ const Calculator: React.FC = () => {
     const [nodes, setNodes] = useState<CustomNode[]>([]);
     const [links, setLinks] = useState<CustomLink[]>([]);
     const [graphType, setGraphType] = useState<string>("undirected")
+    const [weightGraph, setIsWeightgraph] = useState<boolean>(false)
     const [isSHowMenu, setShowMenu] = useState<boolean>(false)
     const [data, setData] = useState<string>("")
     const [numberofNodes, setNumberOfNodes] = useState<number>(NaN)
@@ -138,6 +139,7 @@ const Calculator: React.FC = () => {
     }, []);
     // render basic graph 
     useEffect(() => {
+        setIsWeightgraph(false);
         if (isOpen) return;
         if (svgDimensions.width < 200) return;
         // render nodes: declare node's properties ---
@@ -165,7 +167,6 @@ const Calculator: React.FC = () => {
         if (!lines) return;
         var link_id_cout = 0;
         const linksfromData = lines.slice().map((line) => {
-
             if (line.trim()) {
                 const [u, v, w] = line.split(" ").map(Number)
                 const id = link_id_cout++;
@@ -174,6 +175,7 @@ const Calculator: React.FC = () => {
                 if (!startNode || !endNode) return undefined;
                 if (startNode && endNode) {
                     const newLink: CustomLink = { id: `link-${String(id)}`, source: startNode, target: endNode, weight: w, flag: false }
+                    if (newLink.weight) setIsWeightgraph(true);
                     return newLink;
                 }
             }
@@ -353,6 +355,9 @@ const Calculator: React.FC = () => {
             if (SetGraphData) SetGraphData(nodes, links);
         }
     }, [isOpen])
+
+    // Graph detail ===========================================================
+    const [showDetail, SetshowDetail] = useState<boolean>(true);
     return (
         <>
             {isOpen && isUpdate && <GraphVisualization />}
@@ -366,7 +371,33 @@ const Calculator: React.FC = () => {
                 {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} Exploration={GetExploration}
                     MST={rs_MST} HAMITON={rs_Hamiton} DFS_Start={DFS_Start} DFS_Path={DFS_Path} BFS_Start={BFS_Start} BFS_Path={BFS_Path} SetNodeStart={getNodeStart} />}
                 <div className="flex items-center justify-center w-full border border-black bg-color-custom">
-                    <div className="w-[95%] h-5/6 bg-white   shadow-sm shadow-black" ref={exportREf}>
+                    <div className="relative w-[95%] h-5/6 bg-white   shadow-sm shadow-black" ref={exportREf}>
+                        {/* Graph detail box */}
+                        <div className="absolute top-0 right-0 w-auto text-end">
+                            <div className="px-[0.5rem] w-auto bg-slate-100  hover:text-blue-400 hover:cursor-pointer underline select-none"
+                                onClick={() => { SetshowDetail(!showDetail) }}>details &#40;{`${showDetail ? "hide" : "show"}`}&#41;</div>
+                            {
+                                showDetail && <>
+                                    <div className="w-full h-2rem pr-[0.5rem] text-gray-400">
+                                        {graphType} graph
+                                    </div>
+                                    <div className="w-full h-2rem pr-[0.5rem] text-gray-400">
+                                        {weightGraph ? "weighted graph" : "unweighted graph"}
+                                    </div>
+                                    {
+                                        DFS_Path.length > 0 && <div className="w-full h-2rem pr-[0.5rem] text-gray-400">
+                                            {DFS_Path.join('→')}<b className="text-black">:DFS</b>
+                                        </div>
+                                    }
+                                    {
+                                        BFS_Path.length > 0 && <div className="w-full h-2rem pr-[0.5rem] text-gray-400">
+                                            {BFS_Path.join('→')}<b className="text-black">:BFS</b>
+                                        </div>
+                                    }
+                                </>
+                            }
+                        </div>
+
                         <svg ref={svgRef} className="w-full h-full"
 
                             onMouseUp={HandleMouseUp}
@@ -448,6 +479,8 @@ const Calculator: React.FC = () => {
                                     </text>
                                 </g>
                             ))}
+
+
                         </svg>
                     </div>
                 </div>
