@@ -99,6 +99,23 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                 </div>
                 {(isDrawed && data) && <div className="flex flex-col items-start text-[0.75rem] mt-[1rem]">
                     <div className="flex mb-[0.2rem]"><h3><u>graph exploration</u></h3><button className="ml-[1rem] bg-black hover:bg-green-600 rounded-full w-[1.2rem] text-white text-center hover:cursor-pointer">?</button></div>
+                    {/* Shortest path  */}
+                    <button
+                        className={`w-full text-left transition-color duration-100  whitespace-nowrap ${exploration === "sp" ? " bg-black text-white" : "hover:text-[#003161] hover:underline"}`}
+                        onClick={() => {
+                            HandleOpenBox(false)
+                            if (exploration === "sp") {
+                                setExploration("none");
+                                Exploration("none")
+                            } else {
+                                setExploration("sp");
+                                Exploration("sp");
+                            }
+                        }}>{">>"}shortest path
+                    </button>
+                    {exploration === "sp" && <Information headerName="shortest path problem" type="sp" />}
+
+                    {/*MST*/}
                     <button
                         className={`w-full text-left transition-color duration-100  whitespace-nowrap ${exploration === "mst" ? " bg-black text-white" : "hover:text-[#003161] hover:underline"}`}
                         onClick={() => {
@@ -113,6 +130,7 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                         }}>{">>"}mst
                         {exploration === "mst" && <span className={`ml-[6rem] !no-underline`}>MST: {isNaN(MST) ? 0 : MST}</span>}</button>
                     {exploration === "mst" && <Information headerName="minimum spanning tree" type="mst" />}
+
                     <button
                         className={`w-full text-left transition-color duration-100  whitespace-nowrap ${exploration === "hamiton" ? "bg-black text-white" : "hover:text-[#003161] hover:underline"}`}
                         onClick={() => {
