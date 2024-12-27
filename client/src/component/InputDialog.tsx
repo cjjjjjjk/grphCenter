@@ -23,14 +23,22 @@ interface ComponentInputProps {
 
 }
 
+
 const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, className, dataHandler, ReDraw, NumberOfNode, Exploration, MST, HAMITON, SetNodeStart, DFS_Start, DFS_Path, BFS_Start, BFS_Path, }) {
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
     const [isDrawed, setIsDrawed] = useState(false)
-    const [data, setData] = useState("8 6\n12 14\n1 15\n2 10\n1 4\n7 8\n2 7\n9 7\n5 11\n10 13\n8 12\n12 6\n4 11\n15 2\n8 2\n6 3\n1 4\n11 13\n6 1\n13 10\n8 3\n3 12\n14 13\n1 9\n13 5")
-    const [numberOfNode, setNumberOfNodes] = useState("15")
-    const [numberofNode_submited, setNumberofNode_submited] = useState<number>(15)
+    const [data, setData] = useState("1 4\n2 5\n6 1\n4 5\n2 7\n3 4\n3 5\n6 8\n8 5")
+    const [numberOfNode, setNumberOfNodes] = useState("8")
+    const [numberofNode_submited, setNumberofNode_submited] = useState<number>(8)
     const [exploration, setExploration] = useState<string>("")
     const [nodeSelect, setNodeSeclect] = useState<string | null>(null)
+    // shortest path
+    const [spNodestart, setspNodestart] = useState<string>("1")
+    const [spNodeEnd, setspNodeEnd] = useState<string>("8")
+
+    useEffect(() => {
+
+    }, [spNodeEnd, spNodestart])
 
     // effects 
     const addrippleEffect = useRippleEffect()
@@ -65,7 +73,7 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                 <hr className="mb-4" />
                 <input
                     className="w-full h-[1.5rem] focus:outline-none mb-2 border border-black text-[0.75rem] pl-[0.5rem]" type="text" placeholder="number of nodes" autoFocus
-                    onChange={(e) => { setNumberOfNodes(e.target.value) }}
+                    onChange={(e) => { setNumberOfNodes(e.target.value); setspNodeEnd(e.target.value) }}
                     defaultValue={numberOfNode} />
                 <textarea ref={textAreaRef}
                     className={`border border-black w-full p-2 focus:outline-none text-[0.75rem] ${isDrawed && data ? "h-[6rem]" : "h-[18rem]"} transition-[width,height] duration-400`}
@@ -100,19 +108,36 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                 {(isDrawed && data) && <div className="flex flex-col items-start text-[0.75rem] mt-[1rem]">
                     <div className="flex mb-[0.2rem]"><h3><u>graph exploration</u></h3><button className="ml-[1rem] bg-black hover:bg-green-600 rounded-full w-[1.2rem] text-white text-center hover:cursor-pointer">?</button></div>
                     {/* Shortest path  */}
-                    <button
-                        className={`w-full text-left transition-color duration-100  whitespace-nowrap ${exploration === "sp" ? " bg-black text-white" : "hover:text-[#003161] hover:underline"}`}
-                        onClick={() => {
-                            HandleOpenBox(false)
-                            if (exploration === "sp") {
-                                setExploration("none");
-                                Exploration("none")
-                            } else {
-                                setExploration("sp");
-                                Exploration("sp");
-                            }
-                        }}>{">>"}shortest path
-                    </button>
+                    <div className="flex w-full">
+                        <button
+                            className={`w-[60%] text-left transition-color duration-100  whitespace-nowrap ${exploration === "sp" ? " bg-black text-white" : "hover:text-[#003161] hover:underline"}`}
+                            onClick={() => {
+                                HandleOpenBox(false)
+                                if (exploration === "sp") {
+                                    setExploration("none");
+                                    Exploration("none")
+                                } else {
+                                    setExploration("sp");
+                                    Exploration("sp");
+                                }
+                            }}>{">>"}shortest path
+                        </button>
+                        {exploration === "sp" && <>
+                            <button className={`w-[19%] ml-[1%] bg-blue-800  text-white hover:bg-red-500 hover:text-white text-center`}
+                                onClick={() => {
+                                    if (nodeSelect === null)
+                                        setNodeSeclect("sp-start")
+                                    else setNodeSeclect(null)
+                                }}>{spNodestart}</button>
+                            <button className={`w-[19%] ml-[1%] bg-blue-800 rounded-r-sm text-white hover:bg-red-500 hover:text-white text-center`}
+                                onClick={() => {
+                                    if (nodeSelect === null)
+                                        setNodeSeclect("sp-end")
+                                    else setNodeSeclect(null)
+                                }}>{spNodeEnd}</button>
+                        </>}
+                    </div>
+
                     {exploration === "sp" && <Information headerName="shortest path problem" type="sp" />}
 
                     {/*MST*/}
@@ -222,14 +247,21 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
                         </>)}
                 </div>}
             </div>
+
+            {/* Nodes select box */}
             {
-                (nodeSelect !== null) && (exploration === "dfs" || exploration === "bfs")
+                (nodeSelect !== null) && (exploration === "dfs" || exploration === "bfs" || exploration === "sp")
                 && <div className={`fixed flex flex-col overflow-auto overflow-x-hidden justify-between py-[0.4rem] left-[13.5rem] h-[35%] border border-l-black w-[2.2rem] transform -translate-x-1/2 -translate-y-1/2 rounded-r-md bg-white shadow-sm  shadow-black`}>
                     {Array.from({ length: numberofNode_submited }, (_, i) => (
                         <div key={`${i + 1}`} className={`h-[1.5rem] w-full text-[1rem] pl-[0.3rem] hover:bg-black hover:text-white flex items-center ${(i + 1) === Number(exploration == "dfs" ? DFS_Start : BFS_Start) ? "bg-gray-300" : "bg-white cursor-pointer"}`}
                             onClick={() => {
                                 HandleOpenBox(false)
-                                SetNodeStart(String(i + 1));
+                                if (exploration === "sp") {
+                                    if (nodeSelect === "sp-start") setspNodestart(String(i + 1));
+                                    if (nodeSelect === "sp-end") setspNodeEnd(String(i + 1));
+                                } else {
+                                    SetNodeStart(String(i + 1));
+                                }
                                 setNodeSeclect(null)
                             }}>{i + 1}</div>
                     ))}
