@@ -20,6 +20,7 @@ import DFSReturnNewGraph from "../algothrism/dfs";
 import { BfsReturnnewGraph } from "../algothrism/bfs";
 import Menu from "../component/Menu";
 import GraphVisualization from "../component/GraphVisualization";
+import { DijikastrareturnNewgraph } from "../algothrism/dijikastra";
 // ------------------------------------------------------------
 // Main component =============================================
 const Calculator: React.FC = () => {
@@ -239,6 +240,8 @@ const Calculator: React.FC = () => {
                 console.log(ResultGraph.path)
             } else {
                 console.log("SP - weighted graph")
+                ResultGraph = DijikastrareturnNewgraph({ nodes: base_nodes, links: base_links }, sp_nodeStart, sp_nodeEnd)
+                console.log(ResultGraph)
             }
         }
         else if (exploration == "") {
