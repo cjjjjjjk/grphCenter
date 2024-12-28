@@ -416,7 +416,7 @@ const Calculator: React.FC = () => {
                                     }
                                     {
                                         shortTestPath.length > 0 && <div className="w-full h-2rem pr-[0.5rem] text-gray-400">
-                                            {shortTestPath.join('→')}<b className="text-black">:SP{weightGraph ? "(dijikastra)" : "(bfs)"}</b>
+                                            {shortTestPath.at(shortTestPath.length - 1) === sp_nodeEnd ? shortTestPath.join('→') : "false "}<b className="text-black">:SP{weightGraph ? "(dijikastra)" : "(bfs)"}</b>
                                         </div>
                                     }
                                 </>
