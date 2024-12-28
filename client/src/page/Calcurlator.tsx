@@ -47,6 +47,16 @@ const Calculator: React.FC = () => {
     const [DFS_Path, setDFSPath] = useState<string[]>([])
     const [BFS_Start, setBFS_Start] = useState("")
     const [BFS_Path, setBFSPath] = useState<string[]>([])
+    // shortest path 
+    const [sp_nodeStart, setSPnodeStart] = useState<string>("")
+    const [sp_nodeEnd, setSPNodeEnd] = useState<string>("")
+    const [shortTestPath, setShortestPath] = useState<string[]>([])
+    const getSPNodes = function (nodes: string) {
+        const start_end: string[] = nodes.split("-");
+        console.log(start_end)
+        setSPnodeStart(start_end.at(0) || "");
+        setSPNodeEnd(start_end.at(1) || "");
+    }
     // virsualization: 
     const { isOpen, isUpdate, SetGraphData, SetOrderList } = useVirsualBox_context()
 
@@ -221,6 +231,16 @@ const Calculator: React.FC = () => {
             setBFSPath(ResultGraph.path ? ResultGraph.path : [])
             if (SetOrderList) SetOrderList(ResultGraph.path)
         }
+        else if (exploration === "sp") {
+            if (!weightGraph) {
+                console.log("SP - unweighted graph")
+                ResultGraph = BfsReturnnewGraph({ nodes: base_nodes, links: base_links }, sp_nodeStart, sp_nodeEnd);
+                setShortestPath(ResultGraph.path ? ResultGraph.path : [])
+                console.log(ResultGraph.path)
+            } else {
+                console.log("SP - weighted graph")
+            }
+        }
         else if (exploration == "") {
             return;
         }
@@ -244,7 +264,7 @@ const Calculator: React.FC = () => {
                 return link;
             });
         });
-    }, [exploration, DFS_Start, BFS_Start])
+    }, [exploration, DFS_Start, BFS_Start, sp_nodeStart, sp_nodeEnd])
 
 
     // Node moving ===============================================
@@ -369,7 +389,7 @@ const Calculator: React.FC = () => {
             </div>
             <div className="flex bottom-0 w-full h-screen">
                 {graphType && <InputDialog graphType={graphType} className="slide-in" dataHandler={graphData} ReDraw={ReDraw} NumberOfNode={NumberOfNode} Exploration={GetExploration}
-                    MST={rs_MST} HAMITON={rs_Hamiton} DFS_Start={DFS_Start} DFS_Path={DFS_Path} BFS_Start={BFS_Start} BFS_Path={BFS_Path} SetNodeStart={getNodeStart} />}
+                    MST={rs_MST} HAMITON={rs_Hamiton} DFS_Start={DFS_Start} DFS_Path={DFS_Path} BFS_Start={BFS_Start} BFS_Path={BFS_Path} SetNodeStart={getNodeStart} SetSP_Node={getSPNodes} />}
                 <div className="flex items-center justify-center w-full border border-black bg-color-custom">
                     <div className="relative w-[95%] h-5/6 bg-white   shadow-sm shadow-black" ref={exportREf}>
                         {/* Graph detail box */}
@@ -392,6 +412,11 @@ const Calculator: React.FC = () => {
                                     {
                                         BFS_Path.length > 0 && <div className="w-full h-2rem pr-[0.5rem] text-gray-400">
                                             {BFS_Path.join('→')}<b className="text-black">:BFS</b>
+                                        </div>
+                                    }
+                                    {
+                                        shortTestPath.length > 0 && <div className="w-full h-2rem pr-[0.5rem] text-gray-400">
+                                            {shortTestPath.join('→')}<b className="text-black">:SP{weightGraph ? "(dijikastra)" : "(bfs)"}</b>
                                         </div>
                                     }
                                 </>

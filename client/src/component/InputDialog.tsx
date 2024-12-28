@@ -16,15 +16,15 @@ interface ComponentInputProps {
     MST: number,
     HAMITON: boolean,
     SetNodeStart: (nodeStart: string) => void,
+    SetSP_Node: (sp_nodes: string) => void,
     DFS_Start?: string,
     DFS_Path?: string[],
     BFS_Start?: string,
     BFS_Path?: string[],
-
 }
 
 
-const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, className, dataHandler, ReDraw, NumberOfNode, Exploration, MST, HAMITON, SetNodeStart, DFS_Start, DFS_Path, BFS_Start, BFS_Path, }) {
+const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, className, dataHandler, ReDraw, NumberOfNode, Exploration, MST, HAMITON, SetNodeStart, DFS_Start, DFS_Path, BFS_Start, BFS_Path, SetSP_Node }) {
     const textAreaRef = useRef<HTMLTextAreaElement>(null)
     const [isDrawed, setIsDrawed] = useState(false)
     const [data, setData] = useState("1 4\n2 5\n6 1\n4 5\n2 7\n3 4\n3 5\n6 8\n8 5")
@@ -37,7 +37,7 @@ const InputDialog: React.FC<ComponentInputProps> = function ({ graphType, classN
     const [spNodeEnd, setspNodeEnd] = useState<string>("8")
 
     useEffect(() => {
-
+        SetSP_Node(spNodestart + "-" + spNodeEnd)
     }, [spNodeEnd, spNodestart])
 
     // effects 
