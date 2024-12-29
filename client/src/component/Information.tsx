@@ -17,7 +17,7 @@ const graph_information_map = new Map<string | undefined, { des: string, link: s
 const Information: React.FC<Information_FC> = function ({ headerName, type }) {
     return (
         <div className="flex flex-col h-auto w-full bg-gray-50 border-b pl-[0.5rem] pb-[0.3rem]">
-            <h4 className="font-bold">{headerName ? headerName : "header"}</h4>
+            <h4 className="font-bold">{headerName || "header"}</h4>
             <div>
                 <details className="bg-gray-100" open>
                     <summary className="text-[0.5rem] text-gray-600 hover:bg-gray-200 hover:text-black hover:underline" style={{ gap: "20px" }}>more infor</summary>

@@ -40,7 +40,7 @@ export function KruskalReturnNewNodesandLinks(nodes_input: CustomNode[], links_i
     let rs_nodes = nodes_input.map(node => ({ ...node }));
     let rs_links = links_input.map(link => ({ ...link }));
     let rs_MST: number = 0;
-    const sorted_link = [...links_input].sort((a, b) => (a.weight ? a.weight : 0) - (b.weight ? b.weight : 0))
+    const sorted_link = [...links_input].sort((a, b) => (a.weight || 0) - (b.weight || 0))
 
     for (const link of sorted_link) {
         const { source, target } = link;
@@ -48,7 +48,7 @@ export function KruskalReturnNewNodesandLinks(nodes_input: CustomNode[], links_i
             rs_links.map(flag_link => {
                 if (flag_link.source.id == source.id && flag_link.target.id == target.id) {
                     flag_link.flag = true;
-                    rs_MST += flag_link.weight ? flag_link.weight : 0;
+                    rs_MST += flag_link.weight || 0;
                     return flag_link
                 } else return flag_link
             });

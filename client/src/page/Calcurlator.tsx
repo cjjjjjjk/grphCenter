@@ -216,27 +216,27 @@ const Calculator: React.FC = () => {
         var ResultGraph: { nodes: CustomNode[], links: CustomLink[], MST?: number, hamiton?: boolean, path?: string[], linkpath?: string[], cost?: number } = { nodes: base_nodes, links: base_links };
         if (exploration == "mst") {
             ResultGraph = KruskalReturnNewNodesandLinks(base_nodes, base_links)
-            setRs_MST(ResultGraph.MST ? ResultGraph.MST : NaN)
+            setRs_MST(ResultGraph.MST || NaN)
         }
         else if (exploration == "hamiton") {
             ResultGraph = HamiltonReturnNewGraph(base_nodes, base_links, numberofNodes)
-            seRs_Hamiton(ResultGraph.hamiton ? ResultGraph.hamiton : false)
+            seRs_Hamiton(ResultGraph.hamiton || false)
         }
         else if (exploration == "dfs") {
             ResultGraph = DFSReturnNewGraph({ nodes: base_nodes, links: base_links, startNode: DFS_Start })
-            setDFSPath(ResultGraph.path ? ResultGraph.path : [])
+            setDFSPath(ResultGraph.path || [])
             if (SetOrderList) SetOrderList(ResultGraph.path, ResultGraph.linkpath)
         }
         else if (exploration == "bfs") {
             ResultGraph = BfsReturnnewGraph({ nodes: base_nodes, links: base_links }, BFS_Start)
-            setBFSPath(ResultGraph.path ? ResultGraph.path : [])
+            setBFSPath(ResultGraph.path || [])
             if (SetOrderList) SetOrderList(ResultGraph.path)
         }
         else if (exploration === "sp") {
             if (!weightGraph) {
                 console.log("SP - unweighted graph")
                 ResultGraph = BfsReturnnewGraph({ nodes: base_nodes, links: base_links }, sp_nodeStart, sp_nodeEnd);
-                setShortestPath(ResultGraph.path ? ResultGraph.path : [])
+                setShortestPath(ResultGraph.path || [])
                 console.log(ResultGraph.path)
             } else {
                 console.log("SP - weighted graph")
@@ -245,9 +245,7 @@ const Calculator: React.FC = () => {
                 setShortestPath(ResultGraph.path || [])
             }
         }
-        else if (exploration == "") {
-            return;
-        }
+        else if (exploration == "") return;
         else { }
         setNodes((prevNodes) => {
             return prevNodes.map((node) => {

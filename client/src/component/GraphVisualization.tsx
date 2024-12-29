@@ -88,7 +88,7 @@ const GraphVisualization: React.FC = () => {
         },
         directed: false,
     });
-    const dfs_length = (orderList?.length ? orderList?.length : 1) * 2 - 1;
+    const dfs_length = (orderList?.length || 1) * 2 - 1;
     let i = 0;
     const linkorder: string[] | undefined = link_orderList?.slice()
     const RunAnimation_DFS = function () {
@@ -108,7 +108,7 @@ const GraphVisualization: React.FC = () => {
     const [currTypt, setCurrentLayout] = useState<string | undefined>('breadthfirst')
     const SHow_BFSLayout = () => {
         let i = Math.floor(Math.random() * type.length)
-        while (i !== 0 && i === type.indexOf(currTypt ? currTypt : 'cose')) { i = Math.floor(Math.random() * type.length); };
+        while (i !== 0 && i === type.indexOf(currTypt || 'cose')) { i = Math.floor(Math.random() * type.length); };
         setCurrentLayout(type.at(i))
         if (cy) {
             if (currTypt == 'breadthfirst') {
@@ -142,7 +142,7 @@ const GraphVisualization: React.FC = () => {
     let bfs_length = bfs?.path.length;
     let ibfs = 0;
     const RunAnimation_BFS = function () {
-        if (ibfs < (bfs_length ? bfs_length : 1)) {
+        if (ibfs < (bfs_length || 1)) {
             bfs?.path[ibfs].addClass('highlighted');
             if (bfs?.path[ibfs].data().id === mode_data.at(1)) bfs?.path[ibfs].removeClass('highlighted')
             ibfs++;
