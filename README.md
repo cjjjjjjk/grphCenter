@@ -1,10 +1,11 @@
-# grphCenter - Build Graphs and Graph Algorithms
+# grph₵enter - Build Graphs and Graph Algorithms
 
 ## Description
 This project is a web application that provides a visual simulation of graph algorithms and allows users to construct graphs based on provided data. It visualizes graph algorithms in an interactive and graphical manner.
 
 ## Key Features
 - Support for finding the "MST - Minimum Spanning Tree" on weighted graphs.
+- Shortest path problem with BFS (unweighted graph), dijikastra (weighted graph)
 - Check the existence of a Hamiltonian Cycle in a graph.
 - Perform graph traversal using DFS and BFS.
 - ...
@@ -24,33 +25,14 @@ This project is a web application that provides a visual simulation of graph alg
 3. Run the application at http://localhost:3000/:
     ```bash
     npm start
+## Application Screenshots
+### • Home
+![Screenshot 2024-12-29 141253](https://github.com/user-attachments/assets/730a51af-c28d-433e-91e5-0d5f6a02db41)
+### • Carculator
+![Screenshot 2024-12-29 145923](https://github.com/user-attachments/assets/1c7e8948-7e76-4996-befa-045217ef0415)
+
+![Screenshot 2024-12-29 142727](https://github.com/user-attachments/assets/d8cb6985-065c-40c1-a66c-9127f0704a83)
 
 
-
-
-# grphCenter - Xây dựng đồ thị và các thuật toán trên đồ thị.
-## Mô tả:
-Dự án là một trang web mô phỏng trực quan các thuật toán trên đồ thị, xây dựng đồ thị dưới dạng hình ảnh dựa trên dữ liệu được cung cấp. Trực quan hóa các dạng giải thuật trên đồ thị dưới dạng hình ảnh.
-## Tính năng chính:
-- Hỗ trợ tìm "MST - Minimum spanning tree: Cây bao trùm nhỏ nhất" trên độ thị trọng số
-- Kiếm tra sự tồn tại của Chu trình Halminton trên đồ thị.
-- Thực hiện duyệt đồ thị bằng DFS và BFS
-- ...
-
-## Công nghệ sử dụng
-- **React.js**: Xây dựng giao diện người dùng
-- **Tailwind/Css**: Thiết kế giao diện 
-- **Typesctip**: Ngôn ngữ lập trình chính
-
-## Hướng dẫn cài đặt
-1. clone repository này:
-    ```bash
-    git clone 
-2. Cài đặt các dependencies
-    ```bash
-    npm install
-3. Chạy ứng dụng trên http://localhost:3000/
-    ```bash
-    npm start
 
 
