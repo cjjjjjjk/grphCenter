@@ -213,7 +213,7 @@ const Calculator: React.FC = () => {
 
     // Update Graph with algthrism ----------------------
     useEffect(() => {
-        var ResultGraph: { nodes: CustomNode[], links: CustomLink[], MST?: number, hamiton?: boolean, path?: string[], linkpath?: string[] } = { nodes: base_nodes, links: base_links };
+        var ResultGraph: { nodes: CustomNode[], links: CustomLink[], MST?: number, hamiton?: boolean, path?: string[], linkpath?: string[], cost?: number } = { nodes: base_nodes, links: base_links };
         if (exploration == "mst") {
             ResultGraph = KruskalReturnNewNodesandLinks(base_nodes, base_links)
             setRs_MST(ResultGraph.MST ? ResultGraph.MST : NaN)
@@ -241,7 +241,8 @@ const Calculator: React.FC = () => {
             } else {
                 console.log("SP - weighted graph")
                 ResultGraph = DijikastrareturnNewgraph({ nodes: base_nodes, links: base_links }, sp_nodeStart, sp_nodeEnd)
-                console.log(ResultGraph)
+                setSP_cost(ResultGraph.cost || 0)
+                setShortestPath(ResultGraph.path || [])
             }
         }
         else if (exploration == "") {
@@ -381,6 +382,7 @@ const Calculator: React.FC = () => {
 
     // Graph detail ===========================================================
     const [showDetail, SetshowDetail] = useState<boolean>(true);
+    const [SP_cost, setSP_cost] = useState<number>(0)
     return (
         <>
             {isOpen && isUpdate && <GraphVisualization />}
@@ -420,6 +422,11 @@ const Calculator: React.FC = () => {
                                     {
                                         shortTestPath.length > 0 && <div className="w-full h-2rem pr-[0.5rem] text-gray-400">
                                             {shortTestPath.at(shortTestPath.length - 1) === sp_nodeEnd ? shortTestPath.join('→') : "false "}<b className="text-black">:SP{weightGraph ? "(dijikastra)" : "(bfs)"}</b>
+                                        </div>
+                                    }
+                                    {
+                                        shortTestPath.length > 0 && weightGraph && <div className="w-full h-2rem pr-[0.5rem] text-gray-400">
+                                            {SP_cost || "NaN"}<b className="text-black">:SP - cost</b>
                                         </div>
                                     }
                                 </>

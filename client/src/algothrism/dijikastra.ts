@@ -39,7 +39,7 @@ const Dijkstra = function (startNode: string, neighborNodes: Map<string, { id: s
 };
 
 export const DijikastrareturnNewgraph = function ({ nodes: base_Nodes, links: base_Links }: { nodes: CustomNode[], links: CustomLink[] }, startNode: string, endNode?: string)
-    : { nodes: CustomNode[], links: CustomLink[], path: string[], distances: Map<string, number> } {
+    : { nodes: CustomNode[], links: CustomLink[], path: string[], cost: number } {
     const rs_nodes: CustomNode[] = base_Nodes.map((cNode) => ({ ...cNode }));
     const rs_links: CustomLink[] = base_Links.map((cLink) => ({ ...cLink }));
 
@@ -69,8 +69,8 @@ export const DijikastrareturnNewgraph = function ({ nodes: base_Nodes, links: ba
                     link.flag = true;
             });
         });
-        return { nodes: rs_nodes, links: rs_links, path: result, distances };
+        return { nodes: rs_nodes, links: rs_links, path: result, cost: distances.get(endNode!) || 0 };
     }
 
-    return { nodes: rs_nodes, links: rs_links, path: [], distances };
+    return { nodes: rs_nodes, links: rs_links, path: [], cost: 0 };
 };
